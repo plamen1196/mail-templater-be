@@ -11,7 +11,7 @@ import java.io.Serializable;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class MailTemplateId implements Serializable {
+public class EmailTemplateId implements Serializable {
 
     private Long id;
 }

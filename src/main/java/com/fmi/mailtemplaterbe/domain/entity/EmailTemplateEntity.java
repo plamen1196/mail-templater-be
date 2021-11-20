@@ -10,19 +10,22 @@ import javax.persistence.*;
 @Entity
 @Table(name = "mail_templates")
 @Data
-@IdClass(MailTemplateId.class)
+@IdClass(EmailTemplateId.class)
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class MailTemplateEntity {
+public class EmailTemplateEntity {
 
     @Id
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @Column(name = "name", nullable = false)
-    private String name;
+    @Column(name = "title", nullable = false)
+    private String title;
 
-    @Column(name = "template", nullable = false)
-    private String template;
+    @Column(name = "message", nullable = false)
+    private String message;
+
+    @Column(name = "placeholders", nullable = false)
+    private String placeholders;
 }
