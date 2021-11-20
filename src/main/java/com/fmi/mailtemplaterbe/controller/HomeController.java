@@ -22,6 +22,6 @@ public class HomeController {
     public ResponseEntity<String> hello() {
         List<MailTemplateEntity> result = mailTemplateService.getAllTemplates();
 
-        return ResponseEntity.ok("Hello");
+        return ResponseEntity.ok("Templates fetched");
     }
 }
