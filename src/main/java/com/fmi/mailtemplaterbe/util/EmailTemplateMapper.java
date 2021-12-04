@@ -38,7 +38,7 @@ public final class EmailTemplateMapper {
                 .build();
     }
 
-    private static List<String> parsePlaceholdersToList(String placeholders) {
+    public static List<String> parsePlaceholdersToList(String placeholders) {
         if (placeholders == null || placeholders.isEmpty()) {
             // TODO: Improve error handling
             return null;
@@ -47,7 +47,7 @@ public final class EmailTemplateMapper {
         return Arrays.asList(placeholders.split(",", -1));
     }
 
-    private static String parsePlaceholdersToString(List<String> placeholders) {
+    public static String parsePlaceholdersToString(List<String> placeholders) {
         if (placeholders == null || placeholders.isEmpty()) {
             return null;
         }

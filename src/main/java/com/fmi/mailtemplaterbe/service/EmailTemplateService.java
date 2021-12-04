@@ -3,6 +3,7 @@ package com.fmi.mailtemplaterbe.service;
 import com.fmi.mailtemplaterbe.domain.entity.EmailTemplateEntity;
 import com.fmi.mailtemplaterbe.domain.resource.EmailTemplateResource;
 import com.fmi.mailtemplaterbe.repository.EmailTemplateRepository;
+import com.fmi.mailtemplaterbe.util.EmailTemplateExceptionsUtil;
 import com.fmi.mailtemplaterbe.util.EmailTemplateMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -44,19 +45,49 @@ public class EmailTemplateService {
      * @param id The id of the email template.
      * @return The updated email template.
      */
-    public EmailTemplateResource updateTemplateById(Long id) {
+    public EmailTemplateResource updateTemplateById(Long id, EmailTemplateResource emailTemplateResource) {
+        EmailTemplateEntity emailTemplateEntity = emailTemplateRepository.findById(id).orElse(null);
 
-        return null;
+        if (emailTemplateEntity == null) {
+            throw EmailTemplateExceptionsUtil.getEmailTemplateNotFoundException(id);
+        }
+
+        return EmailTemplateMapper.entityToResource(updateTemplateEntityIfNecessary(emailTemplateEntity, emailTemplateResource));
     }
 
     /**
      * Delete an email template by its id.
      *
      * @param id The id of the email template.
-     * @return The deleted email template.
      */
-    public EmailTemplateResource deleteTemplateById(Long id) {
-        return null;
+    public void deleteTemplateById(Long id) {
+        EmailTemplateEntity emailTemplateEntity = emailTemplateRepository.findById(id).orElse(null);
+
+        if (emailTemplateEntity == null) {
+            throw EmailTemplateExceptionsUtil.getEmailTemplateNotFoundException(id);
+        }
+
+        emailTemplateRepository.delete(emailTemplateEntity);
+    }
+
+    private EmailTemplateEntity updateTemplateEntityIfNecessary(EmailTemplateEntity emailTemplateEntity, EmailTemplateResource emailTemplateResource) {
+        final String title = emailTemplateResource.getTitle();
+        final String message = emailTemplateResource.getMessage();
+        final List<String> placeholders = emailTemplateResource.getPlaceholders();
+
+        if (title != null) {
+            emailTemplateEntity.setTitle(title);
+        }
+
+        if (message != null) {
+            emailTemplateEntity.setMessage(message);
+        }
+
+        if (placeholders != null) {
+            emailTemplateEntity.setPlaceholders(EmailTemplateMapper.parsePlaceholdersToString(placeholders));
+        }
+
+        return emailTemplateRepository.save(emailTemplateEntity);
     }
 
     private List<EmailTemplateResource> emailTemplateEntitiesToEmailTemplateResources(

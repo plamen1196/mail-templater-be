@@ -20,7 +20,8 @@ public class EmailTemplatesController {
             value = "/templates",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<EmailTemplateResource> createTemplate(@Valid @RequestBody EmailTemplateResource emailTemplateResource) {
+    public ResponseEntity<EmailTemplateResource> createTemplate(
+            @Valid @RequestBody EmailTemplateResource emailTemplateResource) {
         return ResponseEntity.ok(emailTemplateService.createTemplate(emailTemplateResource));
     }
 
@@ -36,8 +37,9 @@ public class EmailTemplatesController {
             value = "/templates/{id}",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<EmailTemplateResource> updateTemplate(@PathVariable(value = "id") Long id) {
-        return ResponseEntity.ok(emailTemplateService.updateTemplateById(id));
+    public ResponseEntity<EmailTemplateResource> updateTemplate(
+            @PathVariable(value = "id") Long id, @RequestBody EmailTemplateResource emailTemplateResource) {
+        return ResponseEntity.ok(emailTemplateService.updateTemplateById(id, emailTemplateResource));
     }
 
     @DeleteMapping(
@@ -45,6 +47,8 @@ public class EmailTemplatesController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<EmailTemplateResource> deleteTemplate(@PathVariable(value = "id") Long id) {
-        return ResponseEntity.ok(emailTemplateService.deleteTemplateById(id));
+        emailTemplateService.deleteTemplateById(id);
+
+        return ResponseEntity.ok().build();
     }
 }
