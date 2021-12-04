@@ -23,7 +23,10 @@ public class EmailTemplateService {
      * @return The crated email template.
      */
     public EmailTemplateResource createTemplate(EmailTemplateResource emailTemplateResource) {
-        return null;
+        EmailTemplateEntity emailTemplateEntity = EmailTemplateMapper.resourceToEntity(emailTemplateResource);
+        EmailTemplateEntity savedEmailTemplateEntity = emailTemplateRepository.save(emailTemplateEntity);
+
+        return EmailTemplateMapper.entityToResource(savedEmailTemplateEntity);
     }
 
     /**
@@ -32,7 +35,18 @@ public class EmailTemplateService {
      * @return {@link List<EmailTemplateResource>}
      */
     public List<EmailTemplateResource> getAllTemplates() {
-        return mailTemplateEntitiesToMailTemplateResources(emailTemplateRepository.findAll());
+        return emailTemplateEntitiesToEmailTemplateResources(emailTemplateRepository.findAll());
+    }
+
+    /**
+     * Update an email template by its id.
+     *
+     * @param id The id of the email template.
+     * @return The updated email template.
+     */
+    public EmailTemplateResource updateTemplateById(Long id) {
+
+        return null;
     }
 
     /**
@@ -45,7 +59,7 @@ public class EmailTemplateService {
         return null;
     }
 
-    private List<EmailTemplateResource> mailTemplateEntitiesToMailTemplateResources(
+    private List<EmailTemplateResource> emailTemplateEntitiesToEmailTemplateResources(
             List<EmailTemplateEntity> mailTemplateEntities) {
         return mailTemplateEntities.stream()
                 .map(EmailTemplateMapper::entityToResource)

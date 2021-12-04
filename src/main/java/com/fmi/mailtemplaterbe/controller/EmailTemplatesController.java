@@ -7,6 +7,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -19,8 +20,8 @@ public class EmailTemplatesController {
             value = "/templates",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<EmailTemplateResource> createTemplate(@RequestBody EmailTemplateResource emailTemplateResource) {
-        return ResponseEntity.ok(null);
+    public ResponseEntity<EmailTemplateResource> createTemplate(@Valid @RequestBody EmailTemplateResource emailTemplateResource) {
+        return ResponseEntity.ok(emailTemplateService.createTemplate(emailTemplateResource));
     }
 
     @GetMapping(
@@ -31,13 +32,19 @@ public class EmailTemplatesController {
         return ResponseEntity.ok(emailTemplateService.getAllTemplates());
     }
 
+    @PatchMapping(
+            value = "/templates/{id}",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<EmailTemplateResource> updateTemplate(@PathVariable(value = "id") Long id) {
+        return ResponseEntity.ok(emailTemplateService.updateTemplateById(id));
+    }
+
     @DeleteMapping(
             value = "/templates/{id}",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<EmailTemplateResource> deleteTemplate(@PathVariable(value = "id") String id) {
-        return ResponseEntity.ok(emailTemplateService.deleteTemplateById(Long.valueOf(id)));
+    public ResponseEntity<EmailTemplateResource> deleteTemplate(@PathVariable(value = "id") Long id) {
+        return ResponseEntity.ok(emailTemplateService.deleteTemplateById(id));
     }
-
-
 }
