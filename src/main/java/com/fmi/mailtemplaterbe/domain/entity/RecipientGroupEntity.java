@@ -24,5 +24,5 @@ public class RecipientGroupEntity {
     private String title;
 
     @Column(name = "recipient_ids", nullable = false)
-    private String recipient_ids;
+    private String recipientIds;
 }

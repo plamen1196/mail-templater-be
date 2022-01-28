@@ -71,7 +71,8 @@ public class RecipientService {
         recipientEntityRepository.delete(recipientEntity);
     }
 
-    private RecipientEntity updateRecipientEntityIfNecessary(RecipientEntity recipientEntity, RecipientResource recipientResource) {
+    private RecipientEntity updateRecipientEntityIfNecessary(
+            RecipientEntity recipientEntity, RecipientResource recipientResource) {
         final String email = recipientResource.getEmail();
 
         if (email != null) {

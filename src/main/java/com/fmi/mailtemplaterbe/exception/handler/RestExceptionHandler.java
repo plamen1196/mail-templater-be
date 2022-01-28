@@ -1,6 +1,7 @@
 package com.fmi.mailtemplaterbe.exception.handler;
 
 import com.fmi.mailtemplaterbe.exception.EmailTemplateNotFoundException;
+import com.fmi.mailtemplaterbe.exception.RecipientGroupNotFoundException;
 import com.fmi.mailtemplaterbe.exception.RecipientNotFoundException;
 import com.fmi.mailtemplaterbe.exception.error.ErrorDetails;
 import org.springframework.http.HttpHeaders;
@@ -22,6 +23,13 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(value = { RecipientNotFoundException.class })
     protected ResponseEntity<Object> handleRecipientNotFound(RecipientNotFoundException ex, WebRequest request) {
+        ErrorDetails errorDetails = ex.getErrorDetails();
+
+        return handleExceptionInternal(ex, errorDetails, new HttpHeaders(), errorDetails.getHttpStatus(), request);
+    }
+
+    @ExceptionHandler(value = {RecipientGroupNotFoundException.class })
+    protected ResponseEntity<Object> handleRecipientGroupNotFound(RecipientGroupNotFoundException ex, WebRequest request) {
         ErrorDetails errorDetails = ex.getErrorDetails();
 
         return handleExceptionInternal(ex, errorDetails, new HttpHeaders(), errorDetails.getHttpStatus(), request);

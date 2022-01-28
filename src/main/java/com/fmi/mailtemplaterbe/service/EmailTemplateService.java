@@ -53,7 +53,8 @@ public class EmailTemplateService {
             throw ExceptionsUtil.getEmailTemplateNotFoundException(id);
         }
 
-        return EmailTemplateMapper.entityToResource(updateTemplateEntityIfNecessary(emailTemplateEntity, emailTemplateResource));
+        return EmailTemplateMapper.entityToResource(
+                updateTemplateEntityIfNecessary(emailTemplateEntity, emailTemplateResource));
     }
 
     /**
@@ -71,7 +72,8 @@ public class EmailTemplateService {
         emailTemplateRepository.delete(emailTemplateEntity);
     }
 
-    private EmailTemplateEntity updateTemplateEntityIfNecessary(EmailTemplateEntity emailTemplateEntity, EmailTemplateResource emailTemplateResource) {
+    private EmailTemplateEntity updateTemplateEntityIfNecessary(
+            EmailTemplateEntity emailTemplateEntity, EmailTemplateResource emailTemplateResource) {
         final String title = emailTemplateResource.getTitle();
         final String message = emailTemplateResource.getMessage();
         final List<String> placeholders = emailTemplateResource.getPlaceholders();
