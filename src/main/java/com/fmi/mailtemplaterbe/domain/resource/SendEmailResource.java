@@ -12,7 +12,7 @@ import java.util.List;
 public class SendEmailResource extends EmailTemplateResource {
 
     @NotNull(message = "Recipients must not be null")
-    private List<RecipientResource> recipients;
+    private List<Recipient> recipients;
 
     @NotNull(message = "isHtml must not be null")
     private Boolean isHtml;

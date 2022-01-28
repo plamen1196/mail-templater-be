@@ -2,11 +2,10 @@ package com.fmi.mailtemplaterbe.service;
 
 import com.fmi.mailtemplaterbe.config.EmailConfiguration;
 import com.fmi.mailtemplaterbe.domain.resource.RecipientEmailPreview;
-import com.fmi.mailtemplaterbe.domain.resource.RecipientResource;
+import com.fmi.mailtemplaterbe.domain.resource.Recipient;
 import com.fmi.mailtemplaterbe.domain.resource.SendEmailResource;
 import com.fmi.mailtemplaterbe.util.EmailMessageUtil;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.text.StringSubstitutor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -53,7 +52,7 @@ public class EmailSenderService {
     private int sendEmailToRecipients(SendEmailResource sendEmailResource) {
         int errorsCount = 0;
 
-        for (RecipientResource recipient : sendEmailResource.getRecipients()) {
+        for (Recipient recipient : sendEmailResource.getRecipients()) {
             try {
                 final String emailSubject = sendEmailResource.getTitle();
                 final String emailMessage =
@@ -97,7 +96,7 @@ public class EmailSenderService {
     private List<RecipientEmailPreview> buildPreviewEmails(SendEmailResource sendEmailResource) {
         List<RecipientEmailPreview> recipientEmailPreviews = new ArrayList<>();
 
-        for (RecipientResource recipient : sendEmailResource.getRecipients()) {
+        for (Recipient recipient : sendEmailResource.getRecipients()) {
             RecipientEmailPreview recipientEmailPreview = RecipientEmailPreview.builder()
                     .email(recipient.getEmail())
                     .subject(sendEmailResource.getTitle())
