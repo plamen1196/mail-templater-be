@@ -40,20 +40,5 @@ public class EmailHistoryService {
         return sendEmailErrorRepository.save(sendEmailErrorEntity);
     }
 
-    //    @Override
-//    public List<EmailRecord> fetchHistory() {
-//        try {
-//            return Files.list(Paths.get(emailSentDir)).map(file -> {
-//                        try {
-//                            return TemplatesUtils.OBJECT_MAPPER
-//                                    .readValue(file.toFile(), EmailRecord.class);
-//                        } catch (IOException e) {
-//                            throw new RuntimeException(e);
-//                        }
-//                    })
-//                    .collect(Collectors.toList());
-//        } catch (IOException e) {
-//            throw new RuntimeException(e);
-//        }
-//    }
+
 }

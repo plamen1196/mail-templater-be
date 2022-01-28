@@ -1,6 +1,7 @@
 package com.fmi.mailtemplaterbe.service;
 
 import com.fmi.mailtemplaterbe.config.EmailConfiguration;
+import com.fmi.mailtemplaterbe.domain.resource.RecipientEmailPreview;
 import com.fmi.mailtemplaterbe.domain.resource.RecipientResource;
 import com.fmi.mailtemplaterbe.domain.resource.SendEmailResource;
 import com.fmi.mailtemplaterbe.util.EmailMessageUtil;
@@ -14,6 +15,8 @@ import javax.mail.MessagingException;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -34,6 +37,17 @@ public class EmailSenderService {
      */
     public int sendEmails(SendEmailResource sendEmailResource) {
         return sendEmailToRecipients(sendEmailResource);
+    }
+
+    /**
+     * Returns a list of preview emails based on the same email template and a different implementation
+     * of the placeholders for that email template for each recipient.
+     *
+     * @param sendEmailResource SendEmailResource
+     * @return list of preview emails
+     */
+    public List<RecipientEmailPreview> getPreviewEmails(SendEmailResource sendEmailResource) {
+        return buildPreviewEmails(sendEmailResource);
     }
 
     private int sendEmailToRecipients(SendEmailResource sendEmailResource) {
@@ -78,5 +92,21 @@ public class EmailSenderService {
         }
 
         emailHistoryService.persistSentEmail(from, to, subject, content, true);
+    }
+
+    private List<RecipientEmailPreview> buildPreviewEmails(SendEmailResource sendEmailResource) {
+        List<RecipientEmailPreview> recipientEmailPreviews = new ArrayList<>();
+
+        for (RecipientResource recipient : sendEmailResource.getRecipients()) {
+            RecipientEmailPreview recipientEmailPreview = RecipientEmailPreview.builder()
+                    .email(recipient.getEmail())
+                    .subject(sendEmailResource.getTitle())
+                    .message(EmailMessageUtil.buildEmailMessage(sendEmailResource.getMessage(), recipient.getPlaceholders()))
+                    .build();
+
+            recipientEmailPreviews.add(recipientEmailPreview);
+        }
+
+        return recipientEmailPreviews;
     }
 }
