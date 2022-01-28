@@ -29,9 +29,9 @@ public class EmailConfiguration {
     @Value("${password}")
     private String password;
 
-    public Session createSMTPSession(){
-
+    public Session createSMTPSession() {
         Properties prop = new Properties();
+
         prop.put("mail.smtp.host", host);
         prop.put("mail.smtp.port", port);
         prop.put("mail.smtp.auth", auth);
