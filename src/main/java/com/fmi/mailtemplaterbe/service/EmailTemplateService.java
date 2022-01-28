@@ -3,7 +3,7 @@ package com.fmi.mailtemplaterbe.service;
 import com.fmi.mailtemplaterbe.domain.entity.EmailTemplateEntity;
 import com.fmi.mailtemplaterbe.domain.resource.EmailTemplateResource;
 import com.fmi.mailtemplaterbe.repository.EmailTemplateRepository;
-import com.fmi.mailtemplaterbe.util.EmailTemplateExceptionsUtil;
+import com.fmi.mailtemplaterbe.util.ExceptionsUtil;
 import com.fmi.mailtemplaterbe.util.EmailTemplateMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -43,13 +43,14 @@ public class EmailTemplateService {
      * Update an email template by its id.
      *
      * @param id The id of the email template.
+     * @param emailTemplateResource The resource data to use for the update.
      * @return The updated email template.
      */
     public EmailTemplateResource updateTemplateById(Long id, EmailTemplateResource emailTemplateResource) {
         EmailTemplateEntity emailTemplateEntity = emailTemplateRepository.findById(id).orElse(null);
 
         if (emailTemplateEntity == null) {
-            throw EmailTemplateExceptionsUtil.getEmailTemplateNotFoundException(id);
+            throw ExceptionsUtil.getEmailTemplateNotFoundException(id);
         }
 
         return EmailTemplateMapper.entityToResource(updateTemplateEntityIfNecessary(emailTemplateEntity, emailTemplateResource));
@@ -64,7 +65,7 @@ public class EmailTemplateService {
         EmailTemplateEntity emailTemplateEntity = emailTemplateRepository.findById(id).orElse(null);
 
         if (emailTemplateEntity == null) {
-            throw EmailTemplateExceptionsUtil.getEmailTemplateNotFoundException(id);
+            throw ExceptionsUtil.getEmailTemplateNotFoundException(id);
         }
 
         emailTemplateRepository.delete(emailTemplateEntity);
