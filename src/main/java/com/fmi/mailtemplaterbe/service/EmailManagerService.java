@@ -4,6 +4,7 @@ import com.fmi.mailtemplaterbe.config.EmailConfiguration;
 import com.fmi.mailtemplaterbe.domain.resource.RecipientEmailPreview;
 import com.fmi.mailtemplaterbe.domain.resource.Recipient;
 import com.fmi.mailtemplaterbe.domain.resource.SendEmailResource;
+import com.fmi.mailtemplaterbe.domain.resource.SentEmailResource;
 import com.fmi.mailtemplaterbe.util.EmailMessageUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,7 +20,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class EmailSenderService {
+public class EmailManagerService {
 
     @Value("${username}")
     private String username;
@@ -47,6 +48,15 @@ public class EmailSenderService {
      */
     public List<RecipientEmailPreview> getPreviewEmails(SendEmailResource sendEmailResource) {
         return buildPreviewEmails(sendEmailResource);
+    }
+
+    /**
+     * Get a list with information about all sent emails - full history.
+     *
+     * @return list with information about all sent emails
+     */
+    public List<SentEmailResource> getSentEmails() {
+        return emailHistoryService.getAllSentEmails();
     }
 
     private int sendEmailToRecipients(SendEmailResource sendEmailResource) {

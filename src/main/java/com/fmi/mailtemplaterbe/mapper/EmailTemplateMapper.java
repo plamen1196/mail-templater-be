@@ -1,6 +1,5 @@
-package com.fmi.mailtemplaterbe.util;
+package com.fmi.mailtemplaterbe.mapper;
 
-import antlr.StringUtils;
 import com.fmi.mailtemplaterbe.domain.entity.EmailTemplateEntity;
 import com.fmi.mailtemplaterbe.domain.resource.EmailTemplateResource;
 

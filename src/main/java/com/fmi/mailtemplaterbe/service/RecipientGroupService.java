@@ -4,7 +4,7 @@ import com.fmi.mailtemplaterbe.domain.entity.RecipientGroupEntity;
 import com.fmi.mailtemplaterbe.domain.resource.RecipientGroupResource;
 import com.fmi.mailtemplaterbe.repository.RecipientGroupRepository;
 import com.fmi.mailtemplaterbe.util.ExceptionsUtil;
-import com.fmi.mailtemplaterbe.util.RecipientGroupMapper;
+import com.fmi.mailtemplaterbe.mapper.RecipientGroupMapper;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.dao.DataIntegrityViolationException;

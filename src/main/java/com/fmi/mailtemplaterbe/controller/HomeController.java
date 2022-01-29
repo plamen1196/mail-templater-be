@@ -1,6 +1,6 @@
 package com.fmi.mailtemplaterbe.controller;
 
-import com.fmi.mailtemplaterbe.service.EmailSenderService;
+import com.fmi.mailtemplaterbe.service.EmailManagerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
@@ -9,10 +9,6 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-
 @CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequiredArgsConstructor
@@ -20,7 +16,7 @@ public class HomeController {
 
     @Value("${username}")
     private String username;
-    private final EmailSenderService emailSenderService;
+    private final EmailManagerService emailManagerService;
 
     @GetMapping(
             value = "/",

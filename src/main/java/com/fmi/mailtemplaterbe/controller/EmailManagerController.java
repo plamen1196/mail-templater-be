@@ -2,7 +2,8 @@ package com.fmi.mailtemplaterbe.controller;
 
 import com.fmi.mailtemplaterbe.domain.resource.RecipientEmailPreview;
 import com.fmi.mailtemplaterbe.domain.resource.SendEmailResource;
-import com.fmi.mailtemplaterbe.service.EmailSenderService;
+import com.fmi.mailtemplaterbe.domain.resource.SentEmailResource;
+import com.fmi.mailtemplaterbe.service.EmailManagerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -14,16 +15,16 @@ import java.util.List;
 @CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequiredArgsConstructor
-public class EmailSenderController {
+public class EmailManagerController {
 
-    private final EmailSenderService emailSenderService;
+    private final EmailManagerService emailManagerService;
 
     @PostMapping(
             value = "/send-emails",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Integer> sendEmail(@Valid @RequestBody SendEmailResource sendEmailResource) {
-        return ResponseEntity.ok(emailSenderService.sendEmails(sendEmailResource));
+        return ResponseEntity.ok(emailManagerService.sendEmails(sendEmailResource));
     }
 
     @PostMapping(
@@ -31,6 +32,14 @@ public class EmailSenderController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<RecipientEmailPreview>> getPreviewEmails(@Valid @RequestBody SendEmailResource sendEmailResource) {
-        return ResponseEntity.ok(emailSenderService.getPreviewEmails(sendEmailResource));
+        return ResponseEntity.ok(emailManagerService.getPreviewEmails(sendEmailResource));
+    }
+
+    @GetMapping(
+            value = "/history",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<SentEmailResource>> getHistory() {
+        return ResponseEntity.ok(emailManagerService.getSentEmails());
     }
 }

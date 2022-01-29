@@ -4,7 +4,7 @@ import com.fmi.mailtemplaterbe.domain.entity.EmailTemplateEntity;
 import com.fmi.mailtemplaterbe.domain.resource.EmailTemplateResource;
 import com.fmi.mailtemplaterbe.repository.EmailTemplateRepository;
 import com.fmi.mailtemplaterbe.util.ExceptionsUtil;
-import com.fmi.mailtemplaterbe.util.EmailTemplateMapper;
+import com.fmi.mailtemplaterbe.mapper.EmailTemplateMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

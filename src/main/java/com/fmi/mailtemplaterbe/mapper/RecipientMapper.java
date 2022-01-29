@@ -1,4 +1,4 @@
-package com.fmi.mailtemplaterbe.util;
+package com.fmi.mailtemplaterbe.mapper;
 
 import com.fmi.mailtemplaterbe.domain.entity.RecipientEntity;
 import com.fmi.mailtemplaterbe.domain.resource.RecipientResource;
