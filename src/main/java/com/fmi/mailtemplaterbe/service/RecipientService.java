@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 public class RecipientService {
 
     private final RecipientEntityRepository recipientEntityRepository;
+    private final RecipientGroupCleanupService recipientGroupCleanupService;
 
     /**
      * Create a recipient.
@@ -71,6 +72,9 @@ public class RecipientService {
         }
 
         recipientEntityRepository.delete(recipientEntity);
+
+        /* Remove the id of the deleted recipient from the recipientIds lists of all recipient groups. */
+        recipientGroupCleanupService.removeRecipientFromAllRecipientGroups(id);
     }
 
     /**
@@ -84,6 +88,24 @@ public class RecipientService {
 
         if (recipientEntity == null) {
             throw ExceptionsUtil.getRecipientNotFoundException(id);
+        }
+
+        return RecipientMapper.entityToResource(recipientEntity);
+    }
+
+    /**
+     * Get a recipient by its id.
+     * <p></p>
+     * NOTE: If the recipient is not found, then null will be returned.
+     *
+     * @param id The id of the recipient.
+     * @return recipient
+     */
+    public RecipientResource getUncheckedRecipientById(Long id) {
+        RecipientEntity recipientEntity = recipientEntityRepository.findById(id).orElse(null);
+
+        if (recipientEntity == null) {
+            return null;
         }
 
         return RecipientMapper.entityToResource(recipientEntity);

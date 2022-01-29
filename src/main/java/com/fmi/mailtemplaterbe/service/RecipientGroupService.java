@@ -142,17 +142,21 @@ public class RecipientGroupService {
             throw ExceptionsUtil.getRecipientGroupNotFoundException(recipientGroupId);
         }
 
-        /* Call this to make sure the recipient exists in the database. */
-        RecipientResource recipient = recipientService.getRecipientById(recipientId);
-
-        /* Remove the recipient from the list of recipient ids if present. */
+        RecipientResource recipient = recipientService.getUncheckedRecipientById(recipientId);
         List<Long> recipientIds =
                 RecipientGroupMapper.parseRecipientIdsToList(recipientGroupEntity.getRecipientIds());
-        if (recipientIds.contains(recipient.getId())) {
+
+        /* Remove the recipientId if the recipient record does not exist at all. */
+        if (recipient == null && recipientIds.contains(recipientId)) {
+            recipientIds.remove(recipientId);
+        }
+
+        /* Remove the recipientId if the recipient record exists and its id is present in the group. */
+        if (recipient != null && recipientIds.contains(recipient.getId())) {
             recipientIds.remove(recipient.getId());
         }
 
-        /* Update and save the recipient group with the added recipient id. */
+        /* Update and save the recipient group without the removed recipient id. */
         String newRecipientIds = RecipientGroupMapper.parseRecipientIdsToString(recipientIds);
         recipientGroupEntity.setRecipientIds(newRecipientIds);
         recipientGroupRepository.save(recipientGroupEntity);
