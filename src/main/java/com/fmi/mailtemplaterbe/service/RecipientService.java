@@ -7,7 +7,9 @@ import com.fmi.mailtemplaterbe.util.ExceptionsUtil;
 import com.fmi.mailtemplaterbe.mapper.RecipientMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -42,7 +44,7 @@ public class RecipientService {
     /**
      * Update the recipient by its id.
      *
-     * @param id The id of the recipient.
+     * @param id                The id of the recipient.
      * @param recipientResource The resource data to use for the update.
      * @return The updated recipient.
      */
@@ -69,6 +71,38 @@ public class RecipientService {
         }
 
         recipientEntityRepository.delete(recipientEntity);
+    }
+
+    /**
+     * Get a recipient by its id.
+     *
+     * @param id The id of the recipient.
+     * @return recipient
+     */
+    public RecipientResource getRecipientById(Long id) {
+        RecipientEntity recipientEntity = recipientEntityRepository.findById(id).orElse(null);
+
+        if (recipientEntity == null) {
+            throw ExceptionsUtil.getRecipientNotFoundException(id);
+        }
+
+        return RecipientMapper.entityToResource(recipientEntity);
+    }
+
+    /**
+     * Get all recipients, whose id is in the provided recipientIds list.
+     *
+     * @param recipientIds Ids of the recipients
+     * @return recipients
+     */
+    public List<RecipientResource> getRecipientsByIds(List<Long> recipientIds) {
+        List<RecipientEntity> recipientEntities = recipientEntityRepository.findByIdIn(recipientIds).orElse(null);
+
+        if (CollectionUtils.isEmpty(recipientEntities)) {
+            return Collections.emptyList();
+        }
+
+        return recipientEntitiesToRecipientResources(recipientEntities);
     }
 
     private RecipientEntity updateRecipientEntityIfNecessary(

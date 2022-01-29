@@ -2,6 +2,7 @@ package com.fmi.mailtemplaterbe.service;
 
 import com.fmi.mailtemplaterbe.domain.entity.RecipientGroupEntity;
 import com.fmi.mailtemplaterbe.domain.resource.RecipientGroupResource;
+import com.fmi.mailtemplaterbe.domain.resource.RecipientResource;
 import com.fmi.mailtemplaterbe.repository.RecipientGroupRepository;
 import com.fmi.mailtemplaterbe.util.ExceptionsUtil;
 import com.fmi.mailtemplaterbe.mapper.RecipientGroupMapper;
@@ -18,6 +19,7 @@ import java.util.stream.Collectors;
 public class RecipientGroupService {
 
     private final RecipientGroupRepository recipientGroupRepository;
+    private final RecipientService recipientService;
 
     /**
      * Create a recipient group.
@@ -73,6 +75,89 @@ public class RecipientGroupService {
         }
 
         recipientGroupRepository.delete(recipientGroupEntity);
+    }
+
+    /**
+     * Get all recipients of the recipient group with the provided id.
+     *
+     * @param id The id of the recipient group.
+     * @return All recipients of the respective group.
+     */
+    public List<RecipientResource> getRecipientsOfRecipientGroupById(Long id) {
+        RecipientGroupEntity recipientGroupEntity = recipientGroupRepository.findById(id).orElse(null);
+
+        if (recipientGroupEntity == null) {
+            throw ExceptionsUtil.getRecipientGroupNotFoundException(id);
+        }
+
+        List<Long> recipientIds =
+                RecipientGroupMapper.parseRecipientIdsToList(recipientGroupEntity.getRecipientIds());
+
+        return recipientService.getRecipientsByIds(recipientIds);
+    }
+
+    /**
+     * Add a recipient to a recipient group based on the provided recipientGroupId and the recipientId.
+     *
+     * @param recipientGroupId The id of the recipient group.
+     * @param recipientId      The id of the recipient.
+     * @return Updated list of all recipients of the respective group.
+     */
+    public List<RecipientResource> addRecipientToRecipientGroup(Long recipientGroupId, Long recipientId) {
+        RecipientGroupEntity recipientGroupEntity = recipientGroupRepository.findById(recipientGroupId).orElse(null);
+
+        if (recipientGroupEntity == null) {
+            throw ExceptionsUtil.getRecipientGroupNotFoundException(recipientGroupId);
+        }
+
+        /* Call this to make sure the recipient exists in the database. */
+        RecipientResource recipient = recipientService.getRecipientById(recipientId);
+
+        /* Add new recipient to list of recipient ids if not already present. */
+        List<Long> recipientIds =
+                RecipientGroupMapper.parseRecipientIdsToList(recipientGroupEntity.getRecipientIds());
+        if (!recipientIds.contains(recipient.getId())) {
+            recipientIds.add(recipient.getId());
+        }
+
+        /* Update and save the recipient group with the added recipient id. */
+        String newRecipientIds = RecipientGroupMapper.parseRecipientIdsToString(recipientIds);
+        recipientGroupEntity.setRecipientIds(newRecipientIds);
+        recipientGroupRepository.save(recipientGroupEntity);
+
+        return getRecipientsOfRecipientGroupById(recipientGroupId);
+    }
+
+    /**
+     * Remove a recipient from a recipient group based on the provided recipientGroupId and the recipientId.
+     *
+     * @param recipientGroupId The id of the recipient group.
+     * @param recipientId      The id of the recipient.
+     * @return Updated list of all recipients of the respective group.
+     */
+    public List<RecipientResource> removeRecipientFromRecipientGroup(Long recipientGroupId, Long recipientId) {
+        RecipientGroupEntity recipientGroupEntity = recipientGroupRepository.findById(recipientGroupId).orElse(null);
+
+        if (recipientGroupEntity == null) {
+            throw ExceptionsUtil.getRecipientGroupNotFoundException(recipientGroupId);
+        }
+
+        /* Call this to make sure the recipient exists in the database. */
+        RecipientResource recipient = recipientService.getRecipientById(recipientId);
+
+        /* Remove the recipient from the list of recipient ids if present. */
+        List<Long> recipientIds =
+                RecipientGroupMapper.parseRecipientIdsToList(recipientGroupEntity.getRecipientIds());
+        if (recipientIds.contains(recipient.getId())) {
+            recipientIds.remove(recipient.getId());
+        }
+
+        /* Update and save the recipient group with the added recipient id. */
+        String newRecipientIds = RecipientGroupMapper.parseRecipientIdsToString(recipientIds);
+        recipientGroupEntity.setRecipientIds(newRecipientIds);
+        recipientGroupRepository.save(recipientGroupEntity);
+
+        return getRecipientsOfRecipientGroupById(recipientGroupId);
     }
 
     private RecipientGroupEntity saveRecipientGroupEntity(RecipientGroupEntity recipientGroupEntity) {

@@ -5,6 +5,7 @@ import com.fmi.mailtemplaterbe.domain.resource.RecipientGroupResource;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public final class RecipientGroupMapper {
 
@@ -36,20 +37,25 @@ public final class RecipientGroupMapper {
                 .build();
     }
 
-    public static List<String> parseRecipientIdsToList(String recipientIds) {
+    public static List<Long> parseRecipientIdsToList(String recipientIds) {
         if (recipientIds == null || recipientIds.isEmpty()) {
             // TODO: Improve error handling
             return null;
         }
 
-        return Arrays.asList(recipientIds.split(",", -1));
+        return Arrays.asList(recipientIds.split(",", -1)).stream()
+                .map(recipientId -> Long.valueOf(recipientId))
+                .collect(Collectors.toList());
     }
 
-    public static String parseRecipientIdsToString(List<String> recipientIds) {
+    public static String parseRecipientIdsToString(List<Long> recipientIds) {
         if (recipientIds == null || recipientIds.isEmpty()) {
             return null;
         }
 
-        return String.join(",", recipientIds);
+        List<String> recipientIdsAsStrings =
+                recipientIds.stream().map(recipientId -> String.valueOf(recipientId)).collect(Collectors.toList());
+
+        return String.join(",", recipientIdsAsStrings);
     }
 }
