@@ -136,23 +136,23 @@ public class RecipientService {
         final String phoneNumber = recipientResource.getPhoneNumber();
         final String address = recipientResource.getAddress();
 
-        if (StringUtils.isEmpty(email)) {
+        if (StringUtils.isNotEmpty(email)) {
             recipientEntity.setEmail(email);
         }
 
-        if (StringUtils.isEmpty(firstName)) {
+        if (StringUtils.isNotEmpty(firstName)) {
             recipientEntity.setFirstName(firstName);
         }
 
-        if (StringUtils.isEmpty(lastName)) {
+        if (StringUtils.isNotEmpty(lastName)) {
             recipientEntity.setLastName(lastName);
         }
 
-        if (StringUtils.isEmpty(phoneNumber)) {
+        if (StringUtils.isNotEmpty(phoneNumber)) {
             recipientEntity.setPhoneNumber(phoneNumber);
         }
 
-        if (StringUtils.isEmpty(address)) {
+        if (StringUtils.isNotEmpty(address)) {
             recipientEntity.setAddress(address);
         }
 
