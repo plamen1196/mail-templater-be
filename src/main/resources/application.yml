@@ -16,3 +16,7 @@ mail:
     auth: true
     starttls:
       enable: true
+
+email-templates:
+  placeholder-prefix: "%("
+  placeholder-suffix: ")"
