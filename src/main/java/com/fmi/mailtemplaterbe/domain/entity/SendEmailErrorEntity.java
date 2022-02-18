@@ -34,4 +34,7 @@ public class SendEmailErrorEntity {
 
     @Column(name = "error", nullable = false)
     private String error;
+
+    @Column(name = "category", nullable = false)
+    private Long category;
 }

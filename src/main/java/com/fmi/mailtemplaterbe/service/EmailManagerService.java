@@ -1,6 +1,7 @@
 package com.fmi.mailtemplaterbe.service;
 
 import com.fmi.mailtemplaterbe.config.EmailConfiguration;
+import com.fmi.mailtemplaterbe.domain.enums.EmailErrorCategory;
 import com.fmi.mailtemplaterbe.domain.resource.RecipientEmailPreview;
 import com.fmi.mailtemplaterbe.domain.resource.Recipient;
 import com.fmi.mailtemplaterbe.domain.resource.SendEmailResource;
@@ -95,7 +96,19 @@ public class EmailManagerService {
         } catch (MessagingException e) {
             e.printStackTrace();
             emailHistoryService.persistSentEmail(from, to, subject, content, false);
-            emailHistoryService.persistSendEmailError(from, to, subject, content, e.getMessage());
+            emailHistoryService.persistSendEmailError(from, to, subject, content, e.getMessage(), EmailErrorCategory.MESSAGING);
+
+            throw new RuntimeException(e);
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+            emailHistoryService.persistSentEmail(from, to, subject, content, false);
+            emailHistoryService.persistSendEmailError(from, to, subject, content, e.getMessage(), EmailErrorCategory.RUNTIME);
+
+            throw e;
+        } catch (Exception e) {
+            e.printStackTrace();
+            emailHistoryService.persistSentEmail(from, to, subject, content, false);
+            emailHistoryService.persistSendEmailError(from, to, subject, content, e.getMessage(), EmailErrorCategory.UNKNOWN);
 
             throw new RuntimeException(e);
         }

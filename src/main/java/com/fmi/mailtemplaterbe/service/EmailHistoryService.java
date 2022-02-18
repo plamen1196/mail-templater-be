@@ -2,6 +2,7 @@ package com.fmi.mailtemplaterbe.service;
 
 import com.fmi.mailtemplaterbe.domain.entity.SendEmailErrorEntity;
 import com.fmi.mailtemplaterbe.domain.entity.SentEmailEntity;
+import com.fmi.mailtemplaterbe.domain.enums.EmailErrorCategory;
 import com.fmi.mailtemplaterbe.domain.resource.SentEmailResource;
 import com.fmi.mailtemplaterbe.mapper.SentEmailMapper;
 import com.fmi.mailtemplaterbe.repository.SendEmailErrorRepository;
@@ -55,13 +56,14 @@ public class EmailHistoryService {
      * @return Saved record for the failed email.
      */
     public SendEmailErrorEntity persistSendEmailError(
-            String sender, String recipient, String subject, String message, String error) {
+            String sender, String recipient, String subject, String message, String error, EmailErrorCategory emailErrorCategory) {
         SendEmailErrorEntity sendEmailErrorEntity = SendEmailErrorEntity.builder()
                 .senderEmail(sender)
                 .recipientEmail(recipient)
                 .subject(subject)
                 .message(message)
                 .error(error != null ? error : "N/A")
+                .category(emailErrorCategory != null ? emailErrorCategory.getValue() : EmailErrorCategory.UNKNOWN.getValue())
                 .build();
 
         return sendEmailErrorRepository.save(sendEmailErrorEntity);
