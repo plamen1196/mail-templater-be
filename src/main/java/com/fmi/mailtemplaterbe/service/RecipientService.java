@@ -6,6 +6,7 @@ import com.fmi.mailtemplaterbe.repository.RecipientEntityRepository;
 import com.fmi.mailtemplaterbe.util.ExceptionsUtil;
 import com.fmi.mailtemplaterbe.mapper.RecipientMapper;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -130,9 +131,29 @@ public class RecipientService {
     private RecipientEntity updateRecipientEntityIfNecessary(
             RecipientEntity recipientEntity, RecipientResource recipientResource) {
         final String email = recipientResource.getEmail();
+        final String firstName = recipientResource.getFirstName();
+        final String lastName = recipientResource.getLastName();
+        final String phoneNumber = recipientResource.getPhoneNumber();
+        final String address = recipientResource.getAddress();
 
-        if (email != null) {
+        if (StringUtils.isEmpty(email)) {
             recipientEntity.setEmail(email);
+        }
+
+        if (StringUtils.isEmpty(firstName)) {
+            recipientEntity.setFirstName(firstName);
+        }
+
+        if (StringUtils.isEmpty(lastName)) {
+            recipientEntity.setLastName(lastName);
+        }
+
+        if (StringUtils.isEmpty(phoneNumber)) {
+            recipientEntity.setPhoneNumber(phoneNumber);
+        }
+
+        if (StringUtils.isEmpty(address)) {
+            recipientEntity.setAddress(address);
         }
 
         return recipientEntityRepository.save(recipientEntity);
