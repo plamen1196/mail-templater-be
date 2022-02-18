@@ -17,6 +17,10 @@ public final class RecipientMapper {
         return RecipientResource.builder()
                 .id(recipientEntity.getId())
                 .email(recipientEntity.getEmail())
+                .firstName(recipientEntity.getFirstName())
+                .lastName(recipientEntity.getLastName())
+                .phoneNumber(recipientEntity.getPhoneNumber())
+                .address(recipientEntity.getAddress())
                 .build();
     }
 
@@ -28,6 +32,10 @@ public final class RecipientMapper {
         return RecipientEntity.builder()
                 .id(recipientResource.getId())
                 .email(recipientResource.getEmail())
+                .firstName(recipientResource.getFirstName())
+                .lastName(recipientResource.getLastName())
+                .phoneNumber(recipientResource.getPhoneNumber())
+                .address(recipientResource.getAddress())
                 .build();
     }
 }

@@ -17,4 +17,12 @@ public class RecipientResource {
 
     @NotBlank(message = "Email must not be blank")
     private String email;
+
+    private String firstName;
+
+    private String lastName;
+
+    private String phoneNumber;
+
+    private String address;
 }
