@@ -7,6 +7,7 @@ import com.fmi.mailtemplaterbe.repository.RecipientGroupRepository;
 import com.fmi.mailtemplaterbe.util.ExceptionsUtil;
 import com.fmi.mailtemplaterbe.mapper.RecipientGroupMapper;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -41,7 +42,7 @@ public class RecipientGroupService {
      * @return {@link List<RecipientGroupResource>}
      */
     public List<RecipientGroupResource> getAllRecipientGroups() {
-        return recipientGroupEntitiesToRecipientGroupResource(recipientGroupRepository.findAll());
+        return recipientGroupEntitiesToRecipientGroupResources(recipientGroupRepository.findAll());
     }
 
     /**
@@ -190,18 +191,18 @@ public class RecipientGroupService {
         final String title = recipientGroupResource.getTitle();
         final String recipientIds = recipientGroupResource.getRecipientIds();
 
-        if (title != null) {
+        if (StringUtils.isNotEmpty(title)) {
             recipientGroupEntity.setTitle(title);
         }
 
-        if (recipientIds != null) {
+        if (StringUtils.isNotEmpty(recipientIds)) {
             recipientGroupEntity.setRecipientIds(recipientIds);
         }
 
         return saveRecipientGroupEntity(recipientGroupEntity);
     }
 
-    private List<RecipientGroupResource> recipientGroupEntitiesToRecipientGroupResource(
+    private List<RecipientGroupResource> recipientGroupEntitiesToRecipientGroupResources(
             List<RecipientGroupEntity> recipientGroupEntities) {
         return recipientGroupEntities.stream()
                 .map(RecipientGroupMapper::entityToResource)

@@ -6,6 +6,7 @@ import com.fmi.mailtemplaterbe.repository.EmailTemplateRepository;
 import com.fmi.mailtemplaterbe.util.ExceptionsUtil;
 import com.fmi.mailtemplaterbe.mapper.EmailTemplateMapper;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -78,11 +79,11 @@ public class EmailTemplateService {
         final String message = emailTemplateResource.getMessage();
         final List<String> placeholders = emailTemplateResource.getPlaceholders();
 
-        if (title != null) {
+        if (StringUtils.isNotEmpty(title)) {
             emailTemplateEntity.setTitle(title);
         }
 
-        if (message != null) {
+        if (StringUtils.isNotEmpty(message)) {
             emailTemplateEntity.setMessage(message);
         }
 
