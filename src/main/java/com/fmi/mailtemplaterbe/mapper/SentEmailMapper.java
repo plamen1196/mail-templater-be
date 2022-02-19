@@ -21,6 +21,7 @@ public final class SentEmailMapper {
                 .senderEmail(sentEmailEntity.getSenderEmail())
                 .recipientEmail(sentEmailEntity.getRecipientEmail())
                 .sentSuccessfully(sentEmailEntity.isSentSuccessfully())
+                .timestamp(sentEmailEntity.getTimestamp())
                 .build();
     }
 
@@ -36,6 +37,7 @@ public final class SentEmailMapper {
                 .senderEmail(sentEmailResource.getSenderEmail())
                 .recipientEmail(sentEmailResource.getRecipientEmail())
                 .sentSuccessfully(sentEmailResource.isSentSuccessfully())
+                .timestamp(sentEmailResource.getTimestamp())
                 .build();
     }
 }

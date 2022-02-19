@@ -2,6 +2,8 @@ package com.fmi.mailtemplaterbe.domain.resource;
 
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Data
 @Builder
 public class SentEmailResource {
@@ -12,4 +14,5 @@ public class SentEmailResource {
     private String senderEmail;
     private String recipientEmail;
     private boolean sentSuccessfully;
+    private LocalDateTime timestamp;
 }
