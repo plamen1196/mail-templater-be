@@ -14,4 +14,8 @@ public interface SentEmailEntityRepository extends JpaRepository<SentEmailEntity
     Optional<SentEmailEntity> findById(Long id);
 
     Optional<List<SentEmailEntity>> findAllByTimestampBetween(LocalDateTime startDate, LocalDateTime endDate);
+
+    Optional<List<SentEmailEntity>> findAllByTimestampAfter(LocalDateTime date);
+
+    Optional<List<SentEmailEntity>> findAllByTimestampBefore(LocalDateTime date);
 }

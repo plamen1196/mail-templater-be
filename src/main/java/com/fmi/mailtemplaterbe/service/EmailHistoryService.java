@@ -13,7 +13,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -90,17 +90,40 @@ public class EmailHistoryService {
      * @return list with information about all sent emails in specific date range
      */
     public List<SentEmailResource> getSentEmailsInRange(LocalDateTime startDate, LocalDateTime endDate) {
-        LocalDateTime pureStartDate = LocalDateTime.of(startDate.toLocalDate(), LocalTime.MIN);
-        LocalDateTime pureEndDate = LocalDateTime.of(endDate.toLocalDate(), LocalTime.MAX);
+        List<SentEmailEntity> sentEmailsInRange = new ArrayList<>();
 
-        List<SentEmailEntity> sentEmailsInRange =
-                sentEmailEntityRepository.findAllByTimestampBetween(pureStartDate, pureEndDate).orElse(null);
+        if (startDate != null && endDate != null) {
+            sentEmailsInRange = getSentEmailEntitiesBetweenDates(startDate, endDate);
+        }
 
-        if (CollectionUtils.isEmpty(sentEmailsInRange)) {
-            return Collections.emptyList();
+        if (startDate != null && endDate == null) {
+            sentEmailsInRange = getSentEmailEntitiesAfterDate(startDate);
+        }
+
+        if (startDate == null && endDate != null) {
+            sentEmailsInRange = getSentEmailEntitiesBeforeDate(endDate);
         }
 
         return sentEmailEntitiesToSentEmailResource(sentEmailsInRange);
+    }
+
+    private List<SentEmailEntity> getSentEmailEntitiesBetweenDates(LocalDateTime startDate, LocalDateTime endDate) {
+        LocalDateTime pureStartDate = LocalDateTime.of(startDate.toLocalDate(), LocalTime.MIN);
+        LocalDateTime pureEndDate = LocalDateTime.of(endDate.toLocalDate(), LocalTime.MAX);
+
+        return sentEmailEntityRepository.findAllByTimestampBetween(pureStartDate, pureEndDate).orElse(null);
+    }
+
+    private List<SentEmailEntity> getSentEmailEntitiesAfterDate(LocalDateTime date) {
+        LocalDateTime pureEndDate = LocalDateTime.of(date.toLocalDate(), LocalTime.MAX);
+
+        return sentEmailEntityRepository.findAllByTimestampAfter(pureEndDate).orElse(null);
+    }
+
+    private List<SentEmailEntity> getSentEmailEntitiesBeforeDate(LocalDateTime date) {
+        LocalDateTime pureEndDate = LocalDateTime.of(date.toLocalDate(), LocalTime.MIN);
+
+        return sentEmailEntityRepository.findAllByTimestampBefore(pureEndDate).orElse(null);
     }
 
     private List<SentEmailResource> sentEmailEntitiesToSentEmailResource(List<SentEmailEntity> sentEmailEntities) {

@@ -58,7 +58,7 @@ public class EmailManagerService {
      * @return list with information about all sent emails
      */
     public List<SentEmailResource> getSentEmails(LocalDateTime startDate, LocalDateTime endDate) {
-        if (startDate != null && endDate != null) {
+        if (startDate != null || endDate != null) {
             return emailHistoryService.getSentEmailsInRange(startDate, endDate);
         }
 
