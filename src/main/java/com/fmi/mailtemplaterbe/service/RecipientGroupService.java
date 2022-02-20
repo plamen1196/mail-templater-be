@@ -195,7 +195,8 @@ public class RecipientGroupService {
             recipientGroupEntity.setTitle(title);
         }
 
-        if (StringUtils.isNotEmpty(recipientIds)) {
+        /* We check only for null, because "" must be parsed into empty array and set successfully. */
+        if (recipientIds != null) {
             recipientGroupEntity.setRecipientIds(recipientIds);
         }
 
