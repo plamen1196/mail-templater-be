@@ -5,11 +5,13 @@ import com.fmi.mailtemplaterbe.domain.resource.SendEmailResource;
 import com.fmi.mailtemplaterbe.domain.resource.SentEmailResource;
 import com.fmi.mailtemplaterbe.service.EmailManagerService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @CrossOrigin(origins = "http://localhost:4200")
@@ -39,7 +41,9 @@ public class EmailManagerController {
             value = "/history",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<SentEmailResource>> getHistory() {
-        return ResponseEntity.ok(emailManagerService.getSentEmails());
+    public ResponseEntity<List<SentEmailResource>> getHistory(
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate) {
+        return ResponseEntity.ok(emailManagerService.getSentEmails(startDate, endDate));
     }
 }

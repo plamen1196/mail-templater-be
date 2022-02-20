@@ -9,7 +9,11 @@ import com.fmi.mailtemplaterbe.repository.SendEmailErrorRepository;
 import com.fmi.mailtemplaterbe.repository.SentEmailEntityRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -76,6 +80,27 @@ public class EmailHistoryService {
      */
     public List<SentEmailResource> getAllSentEmails() {
         return sentEmailEntitiesToSentEmailResource(sentEmailEntityRepository.findAll());
+    }
+
+    /**
+     * Get a list with information about all sent emails in a specific date range.
+     *
+     * @param startDate Start date of the date range
+     * @param endDate End date of the date range
+     * @return list with information about all sent emails in specific date range
+     */
+    public List<SentEmailResource> getSentEmailsInRange(LocalDateTime startDate, LocalDateTime endDate) {
+        LocalDateTime pureStartDate = LocalDateTime.of(startDate.toLocalDate(), LocalTime.MIN);
+        LocalDateTime pureEndDate = LocalDateTime.of(endDate.toLocalDate(), LocalTime.MAX);
+
+        List<SentEmailEntity> sentEmailsInRange =
+                sentEmailEntityRepository.findAllByTimestampBetween(pureStartDate, pureEndDate).orElse(null);
+
+        if (CollectionUtils.isEmpty(sentEmailsInRange)) {
+            return Collections.emptyList();
+        }
+
+        return sentEmailEntitiesToSentEmailResource(sentEmailsInRange);
     }
 
     private List<SentEmailResource> sentEmailEntitiesToSentEmailResource(List<SentEmailEntity> sentEmailEntities) {

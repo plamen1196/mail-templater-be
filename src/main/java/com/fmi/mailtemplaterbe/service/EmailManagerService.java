@@ -16,6 +16,7 @@ import javax.mail.MessagingException;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -56,7 +57,11 @@ public class EmailManagerService {
      *
      * @return list with information about all sent emails
      */
-    public List<SentEmailResource> getSentEmails() {
+    public List<SentEmailResource> getSentEmails(LocalDateTime startDate, LocalDateTime endDate) {
+        if (startDate != null && endDate != null) {
+            return emailHistoryService.getSentEmailsInRange(startDate, endDate);
+        }
+
         return emailHistoryService.getAllSentEmails();
     }
 
