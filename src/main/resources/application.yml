@@ -9,6 +9,7 @@ server:
     include-message: always
     include-binding-errors: always
 
+# Gmail SMTP
 mail:
   smtp:
     host: smtp.gmail.com
@@ -16,6 +17,15 @@ mail:
     auth: true
     starttls:
       enable: true
+
+# FMI SMTP
+#mail:
+#  smtp:
+#    host: email.uni-sofia.bg
+#    port: 465
+#    auth: true
+#    starttls:
+#      enable: true
 
 email-templates:
   placeholder-prefix: "%("
