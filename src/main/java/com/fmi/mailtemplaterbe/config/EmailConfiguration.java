@@ -23,6 +23,12 @@ public class EmailConfiguration {
     @Value("${mail.smtp.starttls.enable}")
     private String starttlsEnable;
 
+    @Value("${mail.smtp.timeout}")
+    private String timeout;
+
+    @Value("${mail.smtp.connectiontimeout}")
+    private String connectionTimeout;
+
     @Value("${username}")
     private String username;
 
@@ -36,6 +42,8 @@ public class EmailConfiguration {
         prop.put("mail.smtp.port", port);
         prop.put("mail.smtp.auth", auth);
         prop.put("mail.smtp.starttls.enable", starttlsEnable); // TLS
+        prop.put("mail.smtp.timeout", timeout);
+        prop.put("mail.smtp.connectiontimeout", connectionTimeout);
 
         Session session = Session.getInstance(prop,
                 new javax.mail.Authenticator() {

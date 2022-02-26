@@ -17,6 +17,8 @@ mail:
     auth: true
     starttls:
       enable: true
+    timeout: 30000
+    connectiontimeout: 30000
 
 # FMI SMTP
 #mail:
@@ -26,6 +28,8 @@ mail:
 #    auth: true
 #    starttls:
 #      enable: true
+#    timeout: 30000
+#    connectiontimeout: 30000
 
 email-templates:
   placeholder-prefix: "%("

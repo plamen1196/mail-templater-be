@@ -43,6 +43,7 @@ public class EmailHistoryService {
                 .subject(subject)
                 .message(message)
                 .sentSuccessfully(sentSuccessfully)
+                .timestamp(LocalDateTime.now())
                 .build();
 
         return sentEmailEntityRepository.save(sentEmailEntity);
@@ -68,6 +69,7 @@ public class EmailHistoryService {
                 .message(message)
                 .error(error != null ? error : "N/A")
                 .category(emailErrorCategory != null ? emailErrorCategory.getValue() : EmailErrorCategory.UNKNOWN.getValue())
+                .timestamp(LocalDateTime.now())
                 .build();
 
         return sendEmailErrorRepository.save(sendEmailErrorEntity);

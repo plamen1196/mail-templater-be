@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "send_email_errors")
@@ -37,4 +38,7 @@ public class SendEmailErrorEntity {
 
     @Column(name = "category", nullable = false)
     private Long category;
+
+    @Column(name = "timestamp", nullable = false)
+    private LocalDateTime timestamp;
 }
