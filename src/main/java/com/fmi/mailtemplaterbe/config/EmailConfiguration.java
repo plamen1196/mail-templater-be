@@ -42,6 +42,7 @@ public class EmailConfiguration {
         prop.put("mail.smtp.port", port);
         prop.put("mail.smtp.auth", auth);
         prop.put("mail.smtp.starttls.enable", starttlsEnable); // TLS
+        prop.put("mail.smtp.ssl.trust", host);
         prop.put("mail.smtp.timeout", timeout);
         prop.put("mail.smtp.connectiontimeout", connectionTimeout);
 

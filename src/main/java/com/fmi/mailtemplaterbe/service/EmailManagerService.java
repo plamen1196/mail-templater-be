@@ -1,6 +1,7 @@
 package com.fmi.mailtemplaterbe.service;
 
 import com.fmi.mailtemplaterbe.config.EmailConfiguration;
+import com.fmi.mailtemplaterbe.config.EmailTemplatesConfiguration;
 import com.fmi.mailtemplaterbe.domain.enums.EmailErrorCategory;
 import com.fmi.mailtemplaterbe.domain.resource.RecipientEmailPreview;
 import com.fmi.mailtemplaterbe.domain.resource.Recipient;
@@ -28,6 +29,7 @@ public class EmailManagerService {
     private String username;
 
     private final EmailConfiguration emailConfiguration;
+    private final EmailTemplatesConfiguration emailTemplatesConfiguration;
     private final EmailHistoryService emailHistoryService;
 
     /**
@@ -72,7 +74,11 @@ public class EmailManagerService {
             try {
                 final String emailSubject = sendEmailResource.getTitle();
                 final String emailMessage =
-                        EmailMessageUtil.buildEmailMessage(sendEmailResource.getMessage(), recipient.getPlaceholders());
+                        EmailMessageUtil.buildEmailMessage(
+                                sendEmailResource.getMessage(),
+                                recipient.getPlaceholders(),
+                                emailTemplatesConfiguration.getPlaceholderPrefix(),
+                                emailTemplatesConfiguration.getPlaceholderSuffix());
                 final boolean isHtmlMessage = sendEmailResource.getIsHtml();
 
                 sendEmailToRecipient(username, recipient.getEmail(), emailSubject, emailMessage, isHtmlMessage);
@@ -128,7 +134,12 @@ public class EmailManagerService {
             RecipientEmailPreview recipientEmailPreview = RecipientEmailPreview.builder()
                     .email(recipient.getEmail())
                     .subject(sendEmailResource.getTitle())
-                    .message(EmailMessageUtil.buildEmailMessage(sendEmailResource.getMessage(), recipient.getPlaceholders()))
+                    .message(
+                            EmailMessageUtil.buildEmailMessage(
+                                    sendEmailResource.getMessage(),
+                                    recipient.getPlaceholders(),
+                                    emailTemplatesConfiguration.getPlaceholderPrefix(),
+                                    emailTemplatesConfiguration.getPlaceholderSuffix()))
                     .build();
 
             recipientEmailPreviews.add(recipientEmailPreview);
