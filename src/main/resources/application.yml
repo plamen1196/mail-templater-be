@@ -32,3 +32,24 @@ mail:
 email-templates:
   placeholder-prefix: "%("
   placeholder-suffix: ")"
+
+email:
+  smtp:
+    defaultServerName: gmail
+    servers:
+      - host: smtp.gmail.com
+        port: 587
+        auth: true
+        starttls:
+          enable: true
+        timeout: 30000
+        connectiontimeout: 30000
+        name: gmail
+      - host: email.uni-sofia.bg
+        port: 465
+        auth: true
+        starttls:
+          enable: true
+        timeout: 30000
+        connectiontimeout: 30000
+        name: uni-sofia

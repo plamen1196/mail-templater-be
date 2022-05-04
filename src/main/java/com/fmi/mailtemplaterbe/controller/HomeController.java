@@ -16,15 +16,12 @@ public class HomeController {
 
     @Value("${username}")
     private String username;
-    private final EmailManagerService emailManagerService;
 
     @GetMapping(
             value = "/",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> getTemplates() {
-
-
+    public ResponseEntity<String> getGreetings() {
         return ResponseEntity.ok("Greetings from Email Templater application!");
     }
 }
