@@ -34,3 +34,4 @@ mail:
 email-templates:
   placeholder-prefix: "%("
   placeholder-suffix: ")"
+
