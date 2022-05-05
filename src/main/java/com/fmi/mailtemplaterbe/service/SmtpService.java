@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
-import java.util.List;
 import java.util.Properties;
 
 @Service
@@ -37,10 +36,18 @@ public class SmtpService {
         Session session = Session.getInstance(prop,
                 new javax.mail.Authenticator() {
                     protected PasswordAuthentication getPasswordAuthentication() {
-                        return new PasswordAuthentication(username, password);
+                        return new PasswordAuthentication(getUsername(), getPassword());
                     }
                 });
         return session;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public String getPassword() {
+        return password;
     }
 
     private SmtpConfiguration.SmtpServer getDefaultSmtpServer() {

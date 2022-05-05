@@ -1,6 +1,5 @@
 package com.fmi.mailtemplaterbe.service;
 
-import com.fmi.mailtemplaterbe.config.EmailConfiguration;
 import com.fmi.mailtemplaterbe.config.EmailTemplatesConfiguration;
 import com.fmi.mailtemplaterbe.domain.enums.EmailErrorCategory;
 import com.fmi.mailtemplaterbe.domain.resource.RecipientEmailPreview;
@@ -9,7 +8,6 @@ import com.fmi.mailtemplaterbe.domain.resource.SendEmailResource;
 import com.fmi.mailtemplaterbe.domain.resource.SentEmailResource;
 import com.fmi.mailtemplaterbe.util.EmailMessageUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.mail.Message;
@@ -25,12 +23,10 @@ import java.util.List;
 @RequiredArgsConstructor
 public class EmailManagerService {
 
-    @Value("${username}")
-    private String username;
-
-    private final EmailConfiguration emailConfiguration;
     private final EmailTemplatesConfiguration emailTemplatesConfiguration;
     private final EmailHistoryService emailHistoryService;
+
+    private final SmtpService smtpService;
 
     /**
      * Sends an email to multiple recipients based on the same email template and a different implementation
@@ -80,8 +76,9 @@ public class EmailManagerService {
                                 emailTemplatesConfiguration.getPlaceholderPrefix(),
                                 emailTemplatesConfiguration.getPlaceholderSuffix());
                 final boolean isHtmlMessage = sendEmailResource.getIsHtml();
+                final String sender = smtpService.getUsername();
 
-                sendEmailToRecipient(username, recipient.getEmail(), emailSubject, emailMessage, isHtmlMessage);
+                sendEmailToRecipient(sender, recipient.getEmail(), emailSubject, emailMessage, isHtmlMessage);
             } catch (Exception e) {
                 errorsCount++;
             }
@@ -92,7 +89,7 @@ public class EmailManagerService {
 
     private void sendEmailToRecipient(String from, String to, String subject, String content, boolean isHtml) {
         try {
-            Message message = new MimeMessage(emailConfiguration.createSMTPSession());
+            Message message = new MimeMessage(smtpService.createSMTPSession());
             message.setFrom(new InternetAddress(from));
             message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to));
             message.setSubject(subject);

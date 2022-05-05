@@ -7,32 +7,6 @@ server:
     include-message: always
     include-binding-errors: always
 
-# Gmail SMTP
-mail:
-  smtp:
-    host: smtp.gmail.com
-    port: 587
-    auth: true
-    starttls:
-      enable: true
-    timeout: 30000
-    connectiontimeout: 30000
-
-# FMI SMTP
-#mail:
-#  smtp:
-#    host: email.uni-sofia.bg
-#    port: 465
-#    auth: true
-#    starttls:
-#      enable: true
-#    timeout: 30000
-#    connectiontimeout: 30000
-
-email-templates:
-  placeholder-prefix: "%("
-  placeholder-suffix: ")"
-
 email:
   smtp:
     defaultServerName: gmail
@@ -52,4 +26,8 @@ email:
           enable: true
         timeout: 30000
         connectiontimeout: 30000
-        name: uni-sofia
+        name: unisofia
+
+email-templates:
+  placeholder-prefix: "%("
+  placeholder-suffix: ")"
