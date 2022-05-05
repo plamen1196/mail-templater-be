@@ -28,7 +28,6 @@ public class RecipientController {
 
     @GetMapping(
             value = "/recipients",
-            consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<RecipientResource>> getRecipients() {
         return ResponseEntity.ok(recipientService.getAllRecipients());
@@ -45,7 +44,6 @@ public class RecipientController {
 
     @DeleteMapping(
             value = "/recipients/{id}",
-            consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<RecipientResource> deleteRecipient(@PathVariable(value = "id") Long id) {
         recipientService.deleteRecipientById(id);

@@ -29,7 +29,6 @@ public class RecipientGroupController {
 
     @GetMapping(
             value = "/recipient-groups",
-            consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<RecipientGroupResource>> getRecipientGroups() {
         return ResponseEntity.ok(recipientGroupService.getAllRecipientGroups());
@@ -56,7 +55,6 @@ public class RecipientGroupController {
 
     @GetMapping(
             value = "/recipient-groups/{id}/recipients",
-            consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<RecipientResource>> getRecipientsOfRecipientGroupById(@PathVariable(value = "id") Long id) {
         return ResponseEntity.ok(recipientGroupService.getRecipientsOfRecipientGroupById(id));
@@ -64,7 +62,6 @@ public class RecipientGroupController {
 
     @PostMapping(
             value = "/recipient-groups/{recipientGroupId}/recipients/{recipientId}",
-            consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<RecipientResource>> addRecipientToRecipientGroup(
             @PathVariable(value = "recipientGroupId") Long recipientGroupId,
@@ -74,7 +71,6 @@ public class RecipientGroupController {
 
     @DeleteMapping(
             value = "/recipient-groups/{recipientGroupId}/recipients/{recipientId}",
-            consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<RecipientResource>> removeRecipientFromRecipientGroup(
             @PathVariable(value = "recipientGroupId") Long recipientGroupId,

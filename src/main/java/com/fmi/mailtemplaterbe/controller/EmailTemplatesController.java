@@ -28,7 +28,6 @@ public class EmailTemplatesController {
 
     @GetMapping(
             value = "/templates",
-            consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<EmailTemplateResource>> getTemplates() {
         return ResponseEntity.ok(emailTemplateService.getAllTemplates());
@@ -45,7 +44,6 @@ public class EmailTemplatesController {
 
     @DeleteMapping(
             value = "/templates/{id}",
-            consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<EmailTemplateResource> deleteTemplate(@PathVariable(value = "id") Long id) {
         emailTemplateService.deleteTemplateById(id);
