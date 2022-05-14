@@ -1,5 +1,6 @@
 package com.fmi.mailtemplaterbe.controller;
 
+import com.fmi.mailtemplaterbe.domain.constant.EmailTemplatesConstants;
 import com.fmi.mailtemplaterbe.domain.resource.EmailTemplateResource;
 import com.fmi.mailtemplaterbe.service.EmailTemplateService;
 import lombok.RequiredArgsConstructor;
@@ -49,5 +50,12 @@ public class EmailTemplatesController {
         emailTemplateService.deleteTemplateById(id);
 
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping(
+            value = "/templates/message-max-length",
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Integer> getTemplatesMessageMaxLength() {
+        return ResponseEntity.ok(EmailTemplatesConstants.TEMPLATES_MESSAGE_MAX_LENGTH);
     }
 }
