@@ -7,6 +7,7 @@ import com.fmi.mailtemplaterbe.domain.resource.Recipient;
 import com.fmi.mailtemplaterbe.domain.resource.SendEmailResource;
 import com.fmi.mailtemplaterbe.domain.resource.SentEmailResource;
 import com.fmi.mailtemplaterbe.util.EmailMessageUtil;
+import com.fmi.mailtemplaterbe.util.SentEmailsLocalDateTimeComparator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +18,7 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -56,11 +58,17 @@ public class EmailManagerService {
      * @return list with information about all sent emails
      */
     public List<SentEmailResource> getSentEmails(LocalDateTime startDate, LocalDateTime endDate) {
+        List<SentEmailResource> sentEmails;
+
         if (startDate != null || endDate != null) {
-            return emailHistoryService.getSentEmailsInRange(startDate, endDate);
+            sentEmails = emailHistoryService.getSentEmailsInRange(startDate, endDate);
+        } else {
+            sentEmails = emailHistoryService.getAllSentEmails();
         }
 
-        return emailHistoryService.getAllSentEmails();
+        Collections.sort(sentEmails, new SentEmailsLocalDateTimeComparator());
+
+        return sentEmails;
     }
 
     private int sendEmailToRecipients(SendEmailResource sendEmailResource) {
