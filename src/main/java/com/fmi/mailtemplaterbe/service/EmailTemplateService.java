@@ -7,6 +7,8 @@ import com.fmi.mailtemplaterbe.util.ExceptionsUtil;
 import com.fmi.mailtemplaterbe.mapper.EmailTemplateMapper;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.exception.ConstraintViolationException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,7 +28,7 @@ public class EmailTemplateService {
      */
     public EmailTemplateResource createTemplate(EmailTemplateResource emailTemplateResource) {
         EmailTemplateEntity emailTemplateEntity = EmailTemplateMapper.resourceToEntity(emailTemplateResource);
-        EmailTemplateEntity savedEmailTemplateEntity = emailTemplateRepository.save(emailTemplateEntity);
+        EmailTemplateEntity savedEmailTemplateEntity = saveEmailTemplateEntity(emailTemplateEntity);
 
         return EmailTemplateMapper.entityToResource(savedEmailTemplateEntity);
     }
@@ -73,6 +75,27 @@ public class EmailTemplateService {
         emailTemplateRepository.delete(emailTemplateEntity);
     }
 
+    private EmailTemplateEntity saveEmailTemplateEntity(EmailTemplateEntity emailTemplateEntity) {
+        EmailTemplateEntity savedEmailTemplateEntity = null;
+
+        try {
+            savedEmailTemplateEntity = emailTemplateRepository.save(emailTemplateEntity);
+        } catch (DataIntegrityViolationException e) {
+            final Throwable dataIntegrityViolationCause = e.getCause();
+
+            if (dataIntegrityViolationCause instanceof ConstraintViolationException) {
+                final Throwable constraintViolationCause = dataIntegrityViolationCause.getCause();
+
+                throw ExceptionsUtil.getEmailTemplateConstraintViolationException(
+                        constraintViolationCause.getMessage());
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        return savedEmailTemplateEntity;
+    }
+
     private EmailTemplateEntity updateTemplateEntityIfNecessary(
             EmailTemplateEntity emailTemplateEntity, EmailTemplateResource emailTemplateResource) {
         final String title = emailTemplateResource.getTitle();
@@ -91,7 +114,7 @@ public class EmailTemplateService {
             emailTemplateEntity.setPlaceholders(EmailTemplateMapper.parsePlaceholdersToString(placeholders));
         }
 
-        return emailTemplateRepository.save(emailTemplateEntity);
+        return saveEmailTemplateEntity(emailTemplateEntity);
     }
 
     private List<EmailTemplateResource> emailTemplateEntitiesToEmailTemplateResources(

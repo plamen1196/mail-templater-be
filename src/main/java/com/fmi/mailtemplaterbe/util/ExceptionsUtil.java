@@ -1,9 +1,6 @@
 package com.fmi.mailtemplaterbe.util;
 
-import com.fmi.mailtemplaterbe.exception.EmailTemplateNotFoundException;
-import com.fmi.mailtemplaterbe.exception.RecipientGroupConstraintViolationException;
-import com.fmi.mailtemplaterbe.exception.RecipientGroupNotFoundException;
-import com.fmi.mailtemplaterbe.exception.RecipientNotFoundException;
+import com.fmi.mailtemplaterbe.exception.*;
 import com.fmi.mailtemplaterbe.exception.error.ErrorDetails;
 import org.springframework.http.HttpStatus;
 
@@ -38,7 +35,16 @@ public final class ExceptionsUtil {
         return new RecipientGroupConstraintViolationException(
                 ErrorDetails.builder()
                         .message("Constraint violation exception for recipient group: " + message)
-                        .httpStatus(HttpStatus.NOT_FOUND)
+                        .httpStatus(HttpStatus.CONFLICT)
+                        .build());
+    }
+
+    public static EmailTemplateConstraintViolationException getEmailTemplateConstraintViolationException(
+            String message) {
+        return new EmailTemplateConstraintViolationException(
+                ErrorDetails.builder()
+                        .message("Constraint violation exception for email template: " + message)
+                        .httpStatus(HttpStatus.CONFLICT)
                         .build());
     }
 
