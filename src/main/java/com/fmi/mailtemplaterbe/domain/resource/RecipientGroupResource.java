@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Data
 @AllArgsConstructor
@@ -18,6 +19,6 @@ public class RecipientGroupResource {
     @NotBlank(message = "Title must not be blank")
     private String title;
 
-    @NotBlank(message = "recipientIds must not be blank")
+    @NotNull(message = "recipientIds must not be null")
     private String recipientIds;
 }
