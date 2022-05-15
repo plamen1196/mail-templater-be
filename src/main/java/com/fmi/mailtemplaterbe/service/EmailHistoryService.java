@@ -140,7 +140,7 @@ public class EmailHistoryService {
         SentEmailEntity sentEmailEntity = sentEmailEntityRepository.findById(id).orElse(null);
 
         if (sentEmailEntity == null) {
-            throw ExceptionsUtil.getSentEmailNotFoundException(id);
+            throw ExceptionsUtil.getSentEmailByIdNotFoundException(id);
         }
 
         sentEmailEntity.setConfirmation(sentEmailConfirmation.getValue());

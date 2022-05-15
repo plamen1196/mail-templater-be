@@ -12,6 +12,13 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @ControllerAdvice
 public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
+    @ExceptionHandler(value = { CustomBadRequestException.class })
+    protected ResponseEntity<Object> handleCustomBadRequest(CustomBadRequestException ex, WebRequest request) {
+        ErrorDetails errorDetails = ex.getErrorDetails();
+
+        return handleExceptionInternal(ex, errorDetails, new HttpHeaders(), errorDetails.getHttpStatus(), request);
+    }
+
     @ExceptionHandler(value = { EmailTemplateNotFoundException.class })
     protected ResponseEntity<Object> handleEmailTemplateNotFound(EmailTemplateNotFoundException ex, WebRequest request) {
         ErrorDetails errorDetails = ex.getErrorDetails();
@@ -28,6 +35,13 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(value = {RecipientGroupNotFoundException.class })
     protected ResponseEntity<Object> handleRecipientGroupNotFound(RecipientGroupNotFoundException ex, WebRequest request) {
+        ErrorDetails errorDetails = ex.getErrorDetails();
+
+        return handleExceptionInternal(ex, errorDetails, new HttpHeaders(), errorDetails.getHttpStatus(), request);
+    }
+
+    @ExceptionHandler(value = {SentEmailNotFoundException.class })
+    protected ResponseEntity<Object> handleSentEmailNotFound(SentEmailNotFoundException ex, WebRequest request) {
         ErrorDetails errorDetails = ex.getErrorDetails();
 
         return handleExceptionInternal(ex, errorDetails, new HttpHeaders(), errorDetails.getHttpStatus(), request);

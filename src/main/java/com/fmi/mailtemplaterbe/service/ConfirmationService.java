@@ -2,6 +2,7 @@ package com.fmi.mailtemplaterbe.service;
 
 import com.fmi.mailtemplaterbe.domain.enums.SentEmailConfirmation;
 import com.fmi.mailtemplaterbe.domain.resource.SentEmailResource;
+import com.fmi.mailtemplaterbe.util.ExceptionsUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -16,13 +17,14 @@ public class ConfirmationService {
         SentEmailResource sentEmail = emailHistoryService.getSentEmail(recipientEmail, recipientConfirmationToken);
 
         if (sentEmail == null) {
-            // todo: no sent email found with this recipientEmail and token
+            throw ExceptionsUtil.getSentEmailByRecipientEmailAndConfirmationTokenNotFoundException(
+                    recipientEmail, recipientConfirmationToken);
         }
 
         SentEmailConfirmation recipientSentEmailConfirmation = SentEmailConfirmation.fromValue(recipientConfirmation);
 
-        if (recipientConfirmation == null) {
-            // todo: invalid confirmation value
+        if (recipientSentEmailConfirmation == null) {
+            throw ExceptionsUtil.getCustomBadRequestException("Invalid value for recipientConfirmation.");
         }
 
         emailHistoryService.confirmSentEmail(sentEmail.getId(), recipientSentEmailConfirmation);

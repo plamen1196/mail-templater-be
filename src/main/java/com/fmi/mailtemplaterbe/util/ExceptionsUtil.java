@@ -6,6 +6,14 @@ import org.springframework.http.HttpStatus;
 
 public final class ExceptionsUtil {
 
+    public static CustomBadRequestException getCustomBadRequestException(String message) {
+        return new CustomBadRequestException(
+                ErrorDetails.builder()
+                        .message(message)
+                        .httpStatus(HttpStatus.BAD_REQUEST)
+                        .build());
+    }
+
     public static EmailTemplateNotFoundException getEmailTemplateNotFoundException(Long id) {
         return new EmailTemplateNotFoundException(
                 ErrorDetails.builder()
@@ -30,10 +38,21 @@ public final class ExceptionsUtil {
                         .build());
     }
 
-    public static SentEmailNotFoundException getSentEmailNotFoundException(Long id) {
+    public static SentEmailNotFoundException getSentEmailByIdNotFoundException(Long id) {
         return new SentEmailNotFoundException(
                 ErrorDetails.builder()
                         .message("Sent email with id: " + id + " was not found.")
+                        .httpStatus(HttpStatus.NOT_FOUND)
+                        .build());
+    }
+
+    public static SentEmailNotFoundException getSentEmailByRecipientEmailAndConfirmationTokenNotFoundException(
+            String recipientEmail, String confirmationToken) {
+        return new SentEmailNotFoundException(
+                ErrorDetails.builder()
+                        .message("Sent email with recipientEmail: " + recipientEmail +
+                                 " and confirmationToken: " + confirmationToken +
+                                 " was not found.")
                         .httpStatus(HttpStatus.NOT_FOUND)
                         .build());
     }
