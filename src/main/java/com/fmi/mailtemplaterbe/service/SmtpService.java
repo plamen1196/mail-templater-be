@@ -50,7 +50,7 @@ public class SmtpService {
         return password;
     }
 
-    private SmtpConfiguration.SmtpServer getDefaultSmtpServer() {
+    public SmtpConfiguration.SmtpServer getDefaultSmtpServer() {
         return smtpConfiguration.getServers().stream()
                 .filter(smtpServer -> smtpServer.getName().equalsIgnoreCase(smtpConfiguration.getDefaultServerName()))
                 .findFirst()

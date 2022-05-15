@@ -3,6 +3,7 @@ package com.fmi.mailtemplaterbe.controller;
 import com.fmi.mailtemplaterbe.domain.resource.RecipientEmailPreview;
 import com.fmi.mailtemplaterbe.domain.resource.SendEmailResource;
 import com.fmi.mailtemplaterbe.domain.resource.SentEmailResource;
+import com.fmi.mailtemplaterbe.domain.resource.SmtpServerResource;
 import com.fmi.mailtemplaterbe.service.EmailManagerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -19,6 +20,13 @@ import java.util.List;
 public class EmailManagerController {
 
     private final EmailManagerService emailManagerService;
+
+    @GetMapping(
+            value = "/default-smtp-server",
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<SmtpServerResource> getDefaultSmtpServer() {
+        return ResponseEntity.ok(emailManagerService.getDefaultSmtpServer());
+    }
 
     @PostMapping(
             value = "/send-emails",

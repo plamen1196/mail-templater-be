@@ -9,7 +9,6 @@ import com.fmi.mailtemplaterbe.repository.SendEmailErrorRepository;
 import com.fmi.mailtemplaterbe.repository.SentEmailEntityRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;

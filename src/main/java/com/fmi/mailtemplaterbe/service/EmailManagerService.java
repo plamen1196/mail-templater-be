@@ -1,11 +1,9 @@
 package com.fmi.mailtemplaterbe.service;
 
 import com.fmi.mailtemplaterbe.config.EmailTemplatesConfiguration;
+import com.fmi.mailtemplaterbe.config.SmtpConfiguration;
 import com.fmi.mailtemplaterbe.domain.enums.EmailErrorCategory;
-import com.fmi.mailtemplaterbe.domain.resource.RecipientEmailPreview;
-import com.fmi.mailtemplaterbe.domain.resource.Recipient;
-import com.fmi.mailtemplaterbe.domain.resource.SendEmailResource;
-import com.fmi.mailtemplaterbe.domain.resource.SentEmailResource;
+import com.fmi.mailtemplaterbe.domain.resource.*;
 import com.fmi.mailtemplaterbe.util.EmailMessageUtil;
 import com.fmi.mailtemplaterbe.util.SentEmailsLocalDateTimeComparator;
 import lombok.RequiredArgsConstructor;
@@ -27,8 +25,21 @@ public class EmailManagerService {
 
     private final EmailTemplatesConfiguration emailTemplatesConfiguration;
     private final EmailHistoryService emailHistoryService;
-
     private final SmtpService smtpService;
+
+    /**
+     * Get the default smtp server that is being used for sending emails.
+     *
+     * @return default smtp server
+     */
+    public SmtpServerResource getDefaultSmtpServer() {
+        SmtpConfiguration.SmtpServer smtpServer = smtpService.getDefaultSmtpServer();
+
+        return SmtpServerResource.builder()
+                .host(smtpServer.getHost())
+                .name(smtpServer.getName())
+                .build();
+    }
 
     /**
      * Sends an email to multiple recipients based on the same email template and a different implementation
