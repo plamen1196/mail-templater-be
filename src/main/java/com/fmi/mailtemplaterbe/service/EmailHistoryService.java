@@ -80,37 +80,42 @@ public class EmailHistoryService {
     }
 
     /**
-     * Get a list with information about all sent emails - full history.
+     * Get a list with information about the sent emails, filtered by the respective parameters.
      *
-     * @return list with information about all sent emails
+     * @param subject          Subject
+     * @param senderEmail      Sender email
+     * @param recipientEmail   Recipient email
+     * @param sentSuccessfully Sent successfully or not
+     * @param confirmation     Confirmation value
+     * @param startDate        Start date
+     * @param endDate          End date
+     * @return list with information about the sent emails
      */
-    public List<SentEmailResource> getAllSentEmails() {
-        return sentEmailEntitiesToSentEmailResource(sentEmailEntityRepository.findAll());
-    }
+    public List<SentEmailResource> getSentEmails(
+            String subject,
+            String senderEmail,
+            String recipientEmail,
+            Boolean sentSuccessfully,
+            Long confirmation,
+            LocalDateTime startDate,
+            LocalDateTime endDate) {
+        List<SentEmailResource> sentEmails;
 
-    /**
-     * Get a list with information about all sent emails in a specific date range.
-     *
-     * @param startDate Start date of the date range
-     * @param endDate End date of the date range
-     * @return list with information about all sent emails in specific date range
-     */
-    public List<SentEmailResource> getSentEmailsInRange(LocalDateTime startDate, LocalDateTime endDate) {
-        List<SentEmailEntity> sentEmailsInRange = new ArrayList<>();
-
-        if (startDate != null && endDate != null) {
-            sentEmailsInRange = getSentEmailEntitiesBetweenDates(startDate, endDate);
+        /* First, filter by date, because date filtering has multiple options. */
+        if (startDate != null || endDate != null) {
+            sentEmails = getSentEmailsInRange(startDate, endDate);
+        } else {
+            sentEmails = getAllSentEmails();
         }
 
-        if (startDate != null && endDate == null) {
-            sentEmailsInRange = getSentEmailEntitiesAfterDate(startDate);
-        }
+        /* Second, filter by the rest of the fields. */
+        sentEmails = filterSentEmailsBySubject(sentEmails, subject);
+        sentEmails = filterSentEmailsBySenderEmail(sentEmails, senderEmail);
+        sentEmails = filterSentEmailsByRecipientEmail(sentEmails, recipientEmail);
+        sentEmails = filterSentEmailsBySentSuccessfully(sentEmails, sentSuccessfully);
+        sentEmails = filterSentEmailsByConfirmation(sentEmails, confirmation);
 
-        if (startDate == null && endDate != null) {
-            sentEmailsInRange = getSentEmailEntitiesBeforeDate(endDate);
-        }
-
-        return sentEmailEntitiesToSentEmailResource(sentEmailsInRange);
+        return sentEmails;
     }
 
     /**
@@ -153,6 +158,87 @@ public class EmailHistoryService {
         sentEmailEntity.setConfirmation(sentEmailConfirmation.getValue());
 
         return SentEmailMapper.entityToResource(sentEmailEntityRepository.save(sentEmailEntity));
+    }
+
+    private List<SentEmailResource> getAllSentEmails() {
+        return sentEmailEntitiesToSentEmailResource(sentEmailEntityRepository.findAll());
+    }
+
+    private List<SentEmailResource> getSentEmailsInRange(LocalDateTime startDate, LocalDateTime endDate) {
+        List<SentEmailEntity> sentEmailsInRange = new ArrayList<>();
+
+        if (startDate != null && endDate != null) {
+            sentEmailsInRange = getSentEmailEntitiesBetweenDates(startDate, endDate);
+        }
+
+        if (startDate != null && endDate == null) {
+            sentEmailsInRange = getSentEmailEntitiesAfterDate(startDate);
+        }
+
+        if (startDate == null && endDate != null) {
+            sentEmailsInRange = getSentEmailEntitiesBeforeDate(endDate);
+        }
+
+        return sentEmailEntitiesToSentEmailResource(sentEmailsInRange);
+    }
+
+    private List<SentEmailResource> filterSentEmailsBySubject(
+            List<SentEmailResource> sentEmails, String subject) {
+        if (subject == null) {
+            return sentEmails;
+        }
+
+        return sentEmails.stream()
+                .filter(sentEmail -> sentEmail.getSubject().toLowerCase().contains(subject.toLowerCase()))
+                .collect(Collectors.toList());
+    }
+
+    private List<SentEmailResource> filterSentEmailsBySenderEmail(
+            List<SentEmailResource> sentEmails, String senderEmail) {
+        if (senderEmail == null) {
+            return sentEmails;
+        }
+
+        return sentEmails.stream()
+                .filter(sentEmail -> sentEmail.getSenderEmail().toLowerCase().contains(senderEmail.toLowerCase()))
+                .collect(Collectors.toList());
+    }
+
+    private List<SentEmailResource> filterSentEmailsByRecipientEmail(
+            List<SentEmailResource> sentEmails, String recipientEmail) {
+        if (recipientEmail == null) {
+            return sentEmails;
+        }
+
+        return sentEmails.stream()
+                .filter(sentEmail -> sentEmail.getRecipientEmail().toLowerCase().contains(recipientEmail.toLowerCase()))
+                .collect(Collectors.toList());
+    }
+
+    private List<SentEmailResource> filterSentEmailsBySentSuccessfully(
+            List<SentEmailResource> sentEmails, Boolean sentSuccessfully) {
+        if (sentSuccessfully == null) {
+            return sentEmails;
+        }
+
+        return sentEmails.stream()
+                .filter(sentEmail -> sentSuccessfully.equals(sentEmail.isSentSuccessfully()))
+                .collect(Collectors.toList());
+    }
+
+    private List<SentEmailResource> filterSentEmailsByConfirmation(
+            List<SentEmailResource> sentEmails, Long confirmation) {
+        if (confirmation == null) {
+            return sentEmails;
+        }
+
+        if (SentEmailConfirmation.fromValue(confirmation) == null) {
+            throw new IllegalArgumentException("Invalid confirmation value");
+        }
+
+        return sentEmails.stream()
+                .filter(sentEmail -> confirmation.equals(sentEmail.getConfirmation()))
+                .collect(Collectors.toList());
     }
 
     private List<SentEmailEntity> getSentEmailEntitiesBetweenDates(LocalDateTime startDate, LocalDateTime endDate) {

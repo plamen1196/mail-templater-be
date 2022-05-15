@@ -65,18 +65,27 @@ public class EmailManagerService {
     }
 
     /**
-     * Get a list with information about all sent emails - full history.
+     * Get a list with information about the sent emails, filtered by the respective parameters.
      *
-     * @return list with information about all sent emails
+     * @param subject          Subject
+     * @param senderEmail      Sender email
+     * @param recipientEmail   Recipient email
+     * @param sentSuccessfully Sent successfully or not
+     * @param confirmation     Confirmation value
+     * @param startDate        Start date
+     * @param endDate          End date
+     * @return list with information about the sent emails
      */
-    public List<SentEmailResource> getSentEmails(LocalDateTime startDate, LocalDateTime endDate) {
-        List<SentEmailResource> sentEmails;
-
-        if (startDate != null || endDate != null) {
-            sentEmails = emailHistoryService.getSentEmailsInRange(startDate, endDate);
-        } else {
-            sentEmails = emailHistoryService.getAllSentEmails();
-        }
+    public List<SentEmailResource> getSentEmails(
+            String subject,
+            String senderEmail,
+            String recipientEmail,
+            Boolean sentSuccessfully,
+            Long confirmation,
+            LocalDateTime startDate,
+            LocalDateTime endDate) {
+        final List<SentEmailResource> sentEmails = emailHistoryService.getSentEmails(
+                subject, senderEmail, recipientEmail, sentSuccessfully, confirmation, startDate, endDate);
 
         Collections.sort(sentEmails, new SentEmailsLocalDateTimeComparator());
 

@@ -48,8 +48,14 @@ public class EmailManagerController {
             value = "/history",
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<SentEmailResource>> getHistory(
+            @RequestParam(required = false) String subject,
+            @RequestParam(required = false) String senderEmail,
+            @RequestParam(required = false) String recipientEmail,
+            @RequestParam(required = false) Boolean sentSuccessfully,
+            @RequestParam(required = false) Long confirmation,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate) {
-        return ResponseEntity.ok(emailManagerService.getSentEmails(startDate, endDate));
+        return ResponseEntity.ok(emailManagerService.getSentEmails(
+                subject, senderEmail, recipientEmail, sentSuccessfully, confirmation, startDate, endDate));
     }
 }
