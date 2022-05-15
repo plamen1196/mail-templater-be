@@ -57,6 +57,17 @@ public final class ExceptionsUtil {
                         .build());
     }
 
+    public static SentEmailAlreadyConfirmedException getSentEmailAlreadyConfirmedException(
+            String recipientEmail, String confirmationToken) {
+        return new SentEmailAlreadyConfirmedException(
+                ErrorDetails.builder()
+                        .message("Sent email with recipientEmail: " + recipientEmail +
+                                " and confirmationToken: " + confirmationToken +
+                                " is already confirmed.")
+                        .httpStatus(HttpStatus.CONFLICT)
+                        .build());
+    }
+
     public static RecipientGroupConstraintViolationException getRecipientGroupConstraintViolationException(
             String message) {
         return new RecipientGroupConstraintViolationException(

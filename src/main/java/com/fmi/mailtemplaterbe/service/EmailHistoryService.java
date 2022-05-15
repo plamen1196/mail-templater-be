@@ -143,6 +143,11 @@ public class EmailHistoryService {
             throw ExceptionsUtil.getSentEmailByIdNotFoundException(id);
         }
 
+        if (sentEmailEntity.getConfirmation() != null) {
+            throw ExceptionsUtil.getSentEmailAlreadyConfirmedException(
+                    sentEmailEntity.getRecipientEmail(), sentEmailEntity.getToken());
+        }
+
         sentEmailEntity.setConfirmation(sentEmailConfirmation.getValue());
 
         return SentEmailMapper.entityToResource(sentEmailEntityRepository.save(sentEmailEntity));

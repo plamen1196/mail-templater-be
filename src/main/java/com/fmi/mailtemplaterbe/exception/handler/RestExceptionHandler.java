@@ -47,6 +47,14 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         return handleExceptionInternal(ex, errorDetails, new HttpHeaders(), errorDetails.getHttpStatus(), request);
     }
 
+    @ExceptionHandler(value = {SentEmailAlreadyConfirmedException.class })
+    protected ResponseEntity<Object> handleSentEmailAlreadyConfirmed(SentEmailAlreadyConfirmedException ex, WebRequest request) {
+        ErrorDetails errorDetails = ex.getErrorDetails();
+
+        return handleExceptionInternal(ex, errorDetails, new HttpHeaders(), errorDetails.getHttpStatus(), request);
+    }
+
+
     @ExceptionHandler(value = {RecipientGroupConstraintViolationException.class })
     protected ResponseEntity<Object> handleRecipientGroupConstraintViolationException(RecipientGroupConstraintViolationException ex, WebRequest request) {
         ErrorDetails errorDetails = ex.getErrorDetails();
