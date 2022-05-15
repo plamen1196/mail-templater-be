@@ -22,6 +22,8 @@ public final class SentEmailMapper {
                 .recipientEmail(sentEmailEntity.getRecipientEmail())
                 .sentSuccessfully(sentEmailEntity.isSentSuccessfully())
                 .timestamp(sentEmailEntity.getTimestamp())
+                .confirmation(sentEmailEntity.getConfirmation())
+                /* Mapping confirmation token is unnecessary. */
                 .build();
     }
 
@@ -38,6 +40,8 @@ public final class SentEmailMapper {
                 .recipientEmail(sentEmailResource.getRecipientEmail())
                 .sentSuccessfully(sentEmailResource.isSentSuccessfully())
                 .timestamp(sentEmailResource.getTimestamp())
+                .confirmation(sentEmailResource.getConfirmation())
+                /* Mapping confirmation token is unnecessary. */
                 .build();
     }
 }

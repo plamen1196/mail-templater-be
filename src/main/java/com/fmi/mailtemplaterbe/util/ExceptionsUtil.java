@@ -30,6 +30,14 @@ public final class ExceptionsUtil {
                         .build());
     }
 
+    public static SentEmailNotFoundException getSentEmailNotFoundException(Long id) {
+        return new SentEmailNotFoundException(
+                ErrorDetails.builder()
+                        .message("Sent email with id: " + id + " was not found.")
+                        .httpStatus(HttpStatus.NOT_FOUND)
+                        .build());
+    }
+
     public static RecipientGroupConstraintViolationException getRecipientGroupConstraintViolationException(
             String message) {
         return new RecipientGroupConstraintViolationException(

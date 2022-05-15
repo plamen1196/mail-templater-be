@@ -41,4 +41,7 @@ public class SentEmailEntity {
 
     @Column(name = "confirmation")
     private Long confirmation;
+
+    @Column(name = "token", nullable = false)
+    private String token;
 }

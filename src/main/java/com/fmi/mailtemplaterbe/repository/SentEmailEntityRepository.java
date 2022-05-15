@@ -18,4 +18,6 @@ public interface SentEmailEntityRepository extends JpaRepository<SentEmailEntity
     Optional<List<SentEmailEntity>> findAllByTimestampAfter(LocalDateTime date);
 
     Optional<List<SentEmailEntity>> findAllByTimestampBefore(LocalDateTime date);
+
+    Optional<SentEmailEntity> findByRecipientEmailAndToken(String recipientEmail, String confirmationToken);
 }

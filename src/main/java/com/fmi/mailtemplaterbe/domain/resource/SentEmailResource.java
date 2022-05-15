@@ -15,4 +15,5 @@ public class SentEmailResource {
     private String recipientEmail;
     private boolean sentSuccessfully;
     private LocalDateTime timestamp;
+    private Long confirmation;
 }

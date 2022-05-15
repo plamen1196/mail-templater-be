@@ -19,7 +19,7 @@ public enum SentEmailConfirmation {
         return value;
     }
 
-    public SentEmailConfirmation fromValue(Long value) {
+    public static SentEmailConfirmation fromValue(Long value) {
         for (SentEmailConfirmation sentEmailConfirmation : SentEmailConfirmation.values()) {
             if (sentEmailConfirmation.getValue() == value) {
                 return sentEmailConfirmation;

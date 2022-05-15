@@ -3,10 +3,12 @@ package com.fmi.mailtemplaterbe.service;
 import com.fmi.mailtemplaterbe.domain.entity.SendEmailErrorEntity;
 import com.fmi.mailtemplaterbe.domain.entity.SentEmailEntity;
 import com.fmi.mailtemplaterbe.domain.enums.EmailErrorCategory;
+import com.fmi.mailtemplaterbe.domain.enums.SentEmailConfirmation;
 import com.fmi.mailtemplaterbe.domain.resource.SentEmailResource;
 import com.fmi.mailtemplaterbe.mapper.SentEmailMapper;
 import com.fmi.mailtemplaterbe.repository.SendEmailErrorRepository;
 import com.fmi.mailtemplaterbe.repository.SentEmailEntityRepository;
+import com.fmi.mailtemplaterbe.util.ExceptionsUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -107,6 +109,43 @@ public class EmailHistoryService {
         }
 
         return sentEmailEntitiesToSentEmailResource(sentEmailsInRange);
+    }
+
+    /**
+     * Get a sent email by the recipient email address and the confirmation token.
+     * If no such sent email was found, then null is returned.
+     *
+     * @param recipientEmail Recipient email address
+     * @param confirmationToken Confirmation token
+     * @return sent email if found, otherwise null
+     */
+    public SentEmailResource getSentEmail(String recipientEmail, String confirmationToken) {
+        return SentEmailMapper.entityToResource(
+                sentEmailEntityRepository.findByRecipientEmailAndToken(recipientEmail, confirmationToken)
+                        .orElse(null));
+    }
+
+    /**
+     * Confirm a sent email by updating its confirmation field to the passed value.
+     *
+     * @param id The id of the sent email
+     * @param sentEmailConfirmation The confirmation value for the sent email
+     * @return Updated sent email
+     */
+    public SentEmailResource confirmSentEmail(Long id, SentEmailConfirmation sentEmailConfirmation) {
+        if (sentEmailConfirmation == null) {
+            throw new IllegalArgumentException("Missing confirmation value");
+        }
+
+        SentEmailEntity sentEmailEntity = sentEmailEntityRepository.findById(id).orElse(null);
+
+        if (sentEmailEntity == null) {
+            throw ExceptionsUtil.getSentEmailNotFoundException(id);
+        }
+
+        sentEmailEntity.setConfirmation(sentEmailConfirmation.getValue());
+
+        return SentEmailMapper.entityToResource(sentEmailEntityRepository.save(sentEmailEntity));
     }
 
     private List<SentEmailEntity> getSentEmailEntitiesBetweenDates(LocalDateTime startDate, LocalDateTime endDate) {
