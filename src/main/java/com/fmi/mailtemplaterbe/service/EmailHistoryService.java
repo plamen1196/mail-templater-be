@@ -46,7 +46,8 @@ public class EmailHistoryService {
                 .message(message)
                 .sentSuccessfully(sentSuccessfully)
                 .timestamp(LocalDateTime.now())
-                /* Confirmation is not set during persist, since it is updated separately from the client. */
+                /* Initial confirmation is always unconfirmed. */
+                .confirmation(SentEmailConfirmation.UNCONFIRMED.getValue())
                 .token(token)
                 .build();
 
@@ -150,7 +151,7 @@ public class EmailHistoryService {
             throw ExceptionsUtil.getSentEmailByIdNotFoundException(id);
         }
 
-        if (sentEmailEntity.getConfirmation() != null) {
+        if (SentEmailConfirmation.fromValue(sentEmailEntity.getConfirmation()) != SentEmailConfirmation.UNCONFIRMED) {
             throw ExceptionsUtil.getSentEmailAlreadyConfirmedException(
                     sentEmailEntity.getRecipientEmail(), sentEmailEntity.getToken());
         }

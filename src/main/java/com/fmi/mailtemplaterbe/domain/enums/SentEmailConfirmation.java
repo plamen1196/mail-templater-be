@@ -5,6 +5,7 @@ package com.fmi.mailtemplaterbe.domain.enums;
  * The values of each confirmation must match its DB record counterpart.
  */
 public enum SentEmailConfirmation {
+    UNCONFIRMED(0L),
     RECEIVED(1L),
     RECEIVED_AND_CONFIRMED(2L),
     RECEIVED_AND_REJECTED(3L);
