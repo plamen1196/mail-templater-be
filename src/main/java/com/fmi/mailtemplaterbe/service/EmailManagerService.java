@@ -4,6 +4,7 @@ import com.fmi.mailtemplaterbe.config.EmailTemplatesConfiguration;
 import com.fmi.mailtemplaterbe.config.SmtpConfiguration;
 import com.fmi.mailtemplaterbe.domain.enums.EmailErrorCategory;
 import com.fmi.mailtemplaterbe.domain.resource.*;
+import com.fmi.mailtemplaterbe.util.ConfirmationTokenUtil;
 import com.fmi.mailtemplaterbe.util.EmailMessageUtil;
 import com.fmi.mailtemplaterbe.util.SentEmailsLocalDateTimeComparator;
 import lombok.RequiredArgsConstructor;
@@ -107,6 +108,8 @@ public class EmailManagerService {
     }
 
     private void sendEmailToRecipient(String from, String to, String subject, String content, boolean isHtml) {
+        final String confirmationToken = ConfirmationTokenUtil.generateToken();
+
         try {
             Message message = new MimeMessage(smtpService.createSMTPSession());
             message.setFrom(new InternetAddress(from));
@@ -122,25 +125,25 @@ public class EmailManagerService {
             Transport.send(message);
         } catch (MessagingException e) {
             e.printStackTrace();
-            emailHistoryService.persistSentEmail(from, to, subject, content, false);
+            emailHistoryService.persistSentEmail(from, to, subject, content, false, confirmationToken);
             emailHistoryService.persistSendEmailError(from, to, subject, content, e.getMessage(), EmailErrorCategory.MESSAGING);
 
             throw new RuntimeException(e);
         } catch (RuntimeException e) {
             e.printStackTrace();
-            emailHistoryService.persistSentEmail(from, to, subject, content, false);
+            emailHistoryService.persistSentEmail(from, to, subject, content, false, confirmationToken);
             emailHistoryService.persistSendEmailError(from, to, subject, content, e.getMessage(), EmailErrorCategory.RUNTIME);
 
             throw e;
         } catch (Exception e) {
             e.printStackTrace();
-            emailHistoryService.persistSentEmail(from, to, subject, content, false);
+            emailHistoryService.persistSentEmail(from, to, subject, content, false, confirmationToken);
             emailHistoryService.persistSendEmailError(from, to, subject, content, e.getMessage(), EmailErrorCategory.UNKNOWN);
 
             throw new RuntimeException(e);
         }
 
-        emailHistoryService.persistSentEmail(from, to, subject, content, true);
+        emailHistoryService.persistSentEmail(from, to, subject, content, true, confirmationToken);
     }
 
     private List<RecipientEmailPreview> buildPreviewEmails(SendEmailResource sendEmailResource) {

@@ -34,10 +34,11 @@ public class EmailHistoryService {
      * @param subject          Subject of the email.
      * @param message          Message of the email.
      * @param sentSuccessfully True if the email was sent successfully and false otherwise.
+     * @param token            Confirmation token for the sent email.
      * @return Saved record for the sent email.
      */
     public SentEmailEntity persistSentEmail(
-            String sender, String recipient, String subject, String message, boolean sentSuccessfully) {
+            String sender, String recipient, String subject, String message, boolean sentSuccessfully, String token) {
         SentEmailEntity sentEmailEntity = SentEmailEntity.builder()
                 .senderEmail(sender)
                 .recipientEmail(recipient)
@@ -46,6 +47,7 @@ public class EmailHistoryService {
                 .sentSuccessfully(sentSuccessfully)
                 .timestamp(LocalDateTime.now())
                 /* Confirmation is not set during persist, since it is updated separately from the client. */
+                .token(token)
                 .build();
 
         return sentEmailEntityRepository.save(sentEmailEntity);
