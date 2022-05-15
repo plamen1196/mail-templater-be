@@ -2,7 +2,7 @@ package com.fmi.mailtemplaterbe.domain.enums;
 
 /**
  * Represents the email error categories from the email_errors_categories table.
- * The values of each category must match its DB  record counterpart.
+ * The values of each category must match its DB record counterpart.
  */
 public enum EmailErrorCategory {
     MESSAGING(1L),

@@ -38,4 +38,7 @@ public class SentEmailEntity {
 
     @Column(name = "timestamp", nullable = false)
     private LocalDateTime timestamp;
+
+    @Column(name = "confirmation")
+    private Long confirmation;
 }

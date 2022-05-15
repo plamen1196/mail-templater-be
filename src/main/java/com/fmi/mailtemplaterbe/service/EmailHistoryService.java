@@ -43,6 +43,7 @@ public class EmailHistoryService {
                 .message(message)
                 .sentSuccessfully(sentSuccessfully)
                 .timestamp(LocalDateTime.now())
+                /* Confirmation is not set during persist, since it is updated separately from the client. */
                 .build();
 
         return sentEmailEntityRepository.save(sentEmailEntity);
