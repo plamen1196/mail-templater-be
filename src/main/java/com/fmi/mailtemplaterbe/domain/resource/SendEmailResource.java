@@ -2,6 +2,7 @@ package com.fmi.mailtemplaterbe.domain.resource;
 
 import lombok.*;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
@@ -17,5 +18,6 @@ public class SendEmailResource extends EmailTemplateResource {
     @NotNull(message = "isHtml must not be null")
     private Boolean isHtml;
 
+    @Valid
     private CredentialsResource credentials;
 }

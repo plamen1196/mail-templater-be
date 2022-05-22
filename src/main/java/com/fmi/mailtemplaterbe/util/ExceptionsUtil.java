@@ -14,6 +14,14 @@ public final class ExceptionsUtil {
                         .build());
     }
 
+    public static CredentialsAuthenticationFailedException getCredentialsAuthenticationFailedException(String message) {
+        return new CredentialsAuthenticationFailedException(
+                ErrorDetails.builder()
+                        .message(message)
+                        .httpStatus(HttpStatus.UNAUTHORIZED)
+                        .build());
+    }
+
     public static EmailTemplateNotFoundException getEmailTemplateNotFoundException(Long id) {
         return new EmailTemplateNotFoundException(
                 ErrorDetails.builder()

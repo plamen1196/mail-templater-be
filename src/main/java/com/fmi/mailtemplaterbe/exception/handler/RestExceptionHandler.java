@@ -26,6 +26,13 @@ public class RestExceptionHandler {
         return handleExceptionInternalCustom(ex, errorDetails, new HttpHeaders(), errorDetails.getHttpStatus(), request);
     }
 
+    @ExceptionHandler(value = { CredentialsAuthenticationFailedException.class })
+    protected ResponseEntity<Object> handleCredentialsAuthenticationFailed(CredentialsAuthenticationFailedException ex, WebRequest request) {
+        ErrorDetails errorDetails = ex.getErrorDetails();
+
+        return handleExceptionInternalCustom(ex, errorDetails, new HttpHeaders(), errorDetails.getHttpStatus(), request);
+    }
+
     @ExceptionHandler(value = { EmailTemplateNotFoundException.class })
     protected ResponseEntity<Object> handleEmailTemplateNotFound(EmailTemplateNotFoundException ex, WebRequest request) {
         ErrorDetails errorDetails = ex.getErrorDetails();

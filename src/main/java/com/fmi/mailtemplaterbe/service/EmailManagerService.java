@@ -4,16 +4,15 @@ import com.fmi.mailtemplaterbe.config.EmailTemplatesConfiguration;
 import com.fmi.mailtemplaterbe.config.SmtpConfiguration;
 import com.fmi.mailtemplaterbe.domain.enums.EmailErrorCategory;
 import com.fmi.mailtemplaterbe.domain.resource.*;
+import com.fmi.mailtemplaterbe.exception.CredentialsAuthenticationFailedException;
 import com.fmi.mailtemplaterbe.util.ConfirmationTokenUtil;
 import com.fmi.mailtemplaterbe.util.EmailMessageUtil;
+import com.fmi.mailtemplaterbe.util.ExceptionsUtil;
 import com.fmi.mailtemplaterbe.util.SentEmailsLocalDateTimeComparator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.Session;
-import javax.mail.Transport;
+import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import java.time.LocalDateTime;
@@ -110,6 +109,9 @@ public class EmailManagerService {
     }
 
     private int sendEmailToRecipients(SendEmailResource sendEmailResource) {
+        /* If credentials are provided, we need to validate them first. */
+        validateSmtpServerIfNecessary(sendEmailResource.getCredentials());
+
         int errorsCount = 0;
 
         for (Recipient recipient : sendEmailResource.getRecipients()) {
@@ -124,6 +126,13 @@ public class EmailManagerService {
                 final boolean isHtmlMessage = sendEmailResource.getIsHtml();
 
                 sendEmailToRecipient(sendEmailResource.getCredentials(), recipient.getEmail(), emailSubject, emailMessage, isHtmlMessage);
+            } catch (CredentialsAuthenticationFailedException e) {
+                /*
+                 * If we encounter an authentication failed exception, we do not need to attempt sending an email
+                 * to all recipients. It is clear they will all fail with that error.
+                 * Instead of that, we break the flow.
+                 */
+                throw e;
             } catch (Exception e) {
                 errorsCount++;
             }
@@ -140,10 +149,9 @@ public class EmailManagerService {
         try {
             /*
              * Optional credentials and smtp server.
-             * If they are not provided or the smtp server name is not found in the configuration,
-             * then the default credentials (config vars) and default smtp server will be used.
+             * If they are not provided, the default credentials (config vars) and default smtp server will be used.
              */
-            if (areCredentialsProvided(credentials) && smtpService.smtpServerByNameExists(credentials.getSmtpServerName())) {
+            if (areCredentialsProvided(credentials)) {
                 from = credentials.getUsername();
                 session = smtpService.createSMTPSession(
                         credentials.getUsername(), credentials.getPassword(), credentials.getSmtpServerName());
@@ -168,6 +176,10 @@ public class EmailManagerService {
             e.printStackTrace();
             emailHistoryService.persistSentEmail(from, to, subject, content, false, confirmationToken);
             emailHistoryService.persistSendEmailError(from, to, subject, content, e.getMessage(), EmailErrorCategory.MESSAGING);
+
+            if (e instanceof AuthenticationFailedException) {
+                throw ExceptionsUtil.getCredentialsAuthenticationFailedException(e.getMessage());
+            }
 
             throw new RuntimeException(e);
         } catch (RuntimeException e) {
@@ -213,5 +225,13 @@ public class EmailManagerService {
                credentialsResource.getUsername() != null &&
                credentialsResource.getPassword() != null &&
                credentialsResource.getSmtpServerName() != null;
+    }
+
+    private void validateSmtpServerIfNecessary(CredentialsResource credentialsResource) {
+        if (areCredentialsProvided(credentialsResource) &&
+            !smtpService.smtpServerByNameExists(credentialsResource.getSmtpServerName())) {
+            throw ExceptionsUtil.getCustomBadRequestException(
+                    "Smtp server with name " + credentialsResource.getSmtpServerName() + " was not found.");
+        }
     }
 }
