@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
+import java.util.List;
 import java.util.Properties;
 
 @Service
@@ -77,6 +78,10 @@ public class SmtpService {
                 .filter(smtpServer -> smtpServer.getName().equalsIgnoreCase(smtpConfiguration.getDefaultServerName()))
                 .findFirst()
                 .orElse(null);
+    }
+
+    public List<SmtpConfiguration.SmtpServer> getAllSmtpServer() {
+        return smtpConfiguration.getServers();
     }
 
     public boolean smtpServerByNameExists(String smtpServerName) {

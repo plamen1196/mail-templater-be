@@ -20,6 +20,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -41,6 +42,21 @@ public class EmailManagerService {
                 .host(smtpServer.getHost())
                 .name(smtpServer.getName())
                 .build();
+    }
+
+    /**
+     * Get all smtp servers from the configuration.
+     *
+     * @return smtp servers
+     */
+    public List<SmtpServerResource> getAllSmtpServers() {
+        return smtpService.getAllSmtpServer().stream().map(
+                smtpServer ->
+                        SmtpServerResource.builder()
+                                .host(smtpServer.getHost())
+                                .name(smtpServer.getName())
+                                .build())
+                .collect(Collectors.toList());
     }
 
     /**

@@ -25,6 +25,13 @@ public class EmailManagerController {
         return ResponseEntity.ok(emailManagerService.getDefaultSmtpServer());
     }
 
+    @GetMapping(
+            value = "/get-smtp-servers",
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<SmtpServerResource>> getSmtpServers() {
+        return ResponseEntity.ok(emailManagerService.getAllSmtpServers());
+    }
+
     @PostMapping(
             value = "/send-emails",
             consumes = MediaType.APPLICATION_JSON_VALUE,
