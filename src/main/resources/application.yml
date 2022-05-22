@@ -24,9 +24,21 @@ email:
         auth: true
         starttls:
           enable: true
+        ssl:
+          enable: true
         timeout: 30000
         connectiontimeout: 30000
         name: unisofia
+      - host: smtp.abv.bg
+        port: 465
+        auth: true
+        starttls:
+          enable: true
+        ssl:
+          enable: true
+        timeout: 30000
+        connectiontimeout: 30000
+        name: abv
 
 email-templates:
   placeholder-prefix: "%("

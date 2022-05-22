@@ -52,6 +52,9 @@ public class SmtpService {
         prop.put("mail.smtp.port", smtpServer.getPort());
         prop.put("mail.smtp.auth", smtpServer.getAuth());
         prop.put("mail.smtp.starttls.enable", smtpServer.getStarttls().getEnable()); // TLS
+        if (smtpServer.getSsl() != null && Boolean.parseBoolean(smtpServer.getSsl().getEnable()) == Boolean.TRUE) {
+            prop.put("mail.smtp.ssl.enable", smtpServer.getSsl().getEnable());
+        }
         prop.put("mail.smtp.ssl.trust", smtpServer.getHost());
         prop.put("mail.smtp.timeout", smtpServer.getTimeout());
         prop.put("mail.smtp.connectiontimeout", smtpServer.getConnectiontimeout());

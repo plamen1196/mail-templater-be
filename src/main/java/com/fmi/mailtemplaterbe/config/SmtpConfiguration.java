@@ -25,6 +25,7 @@ public class SmtpConfiguration {
         private String port;
         private String auth;
         private StartTtls starttls;
+        private Ssl ssl;
         private String timeout;
         private String connectiontimeout;
         private String name;
@@ -34,6 +35,13 @@ public class SmtpConfiguration {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class StartTtls {
+        private String enable;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class Ssl {
         private String enable;
     }
 }
