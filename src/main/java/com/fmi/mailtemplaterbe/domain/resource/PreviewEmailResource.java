@@ -1,6 +1,9 @@
 package com.fmi.mailtemplaterbe.domain.resource;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
@@ -9,13 +12,11 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class SendEmailResource extends EmailTemplateResource {
+public class PreviewEmailResource extends EmailTemplateResource {
 
     @NotNull(message = "Recipients must not be null")
     private List<Recipient> recipients;
 
     @NotNull(message = "isHtml must not be null")
     private Boolean isHtml;
-
-    private CredentialsResource credentials;
 }

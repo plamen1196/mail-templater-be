@@ -1,9 +1,6 @@
 package com.fmi.mailtemplaterbe.controller;
 
-import com.fmi.mailtemplaterbe.domain.resource.RecipientEmailPreview;
-import com.fmi.mailtemplaterbe.domain.resource.SendEmailResource;
-import com.fmi.mailtemplaterbe.domain.resource.SentEmailResource;
-import com.fmi.mailtemplaterbe.domain.resource.SmtpServerResource;
+import com.fmi.mailtemplaterbe.domain.resource.*;
 import com.fmi.mailtemplaterbe.service.EmailManagerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -40,8 +37,8 @@ public class EmailManagerController {
             value = "/preview-emails",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<RecipientEmailPreview>> getPreviewEmails(@Valid @RequestBody SendEmailResource sendEmailResource) {
-        return ResponseEntity.ok(emailManagerService.getPreviewEmails(sendEmailResource));
+    public ResponseEntity<List<RecipientEmailPreview>> getPreviewEmails(@Valid @RequestBody PreviewEmailResource previewEmailResource) {
+        return ResponseEntity.ok(emailManagerService.getPreviewEmails(previewEmailResource));
     }
 
     @GetMapping(

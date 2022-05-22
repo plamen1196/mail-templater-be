@@ -2,6 +2,7 @@ package com.fmi.mailtemplaterbe.service;
 
 import com.fmi.mailtemplaterbe.config.SmtpConfiguration;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -42,6 +43,27 @@ public class SmtpService {
         return session;
     }
 
+    public Session createSMTPSession(String username, String password, String smtpServerName) {
+        final SmtpConfiguration.SmtpServer smtpServer = getSmtpServerByName(smtpServerName);
+        final Properties prop = new Properties();
+
+        prop.put("mail.smtp.host", smtpServer.getHost());
+        prop.put("mail.smtp.port", smtpServer.getPort());
+        prop.put("mail.smtp.auth", smtpServer.getAuth());
+        prop.put("mail.smtp.starttls.enable", smtpServer.getStarttls().getEnable()); // TLS
+        prop.put("mail.smtp.ssl.trust", smtpServer.getHost());
+        prop.put("mail.smtp.timeout", smtpServer.getTimeout());
+        prop.put("mail.smtp.connectiontimeout", smtpServer.getConnectiontimeout());
+
+        Session session = Session.getInstance(prop,
+                new javax.mail.Authenticator() {
+                    protected PasswordAuthentication getPasswordAuthentication() {
+                        return new PasswordAuthentication(username, password);
+                    }
+                });
+        return session;
+    }
+
     public String getUsername() {
         return username;
     }
@@ -55,5 +77,27 @@ public class SmtpService {
                 .filter(smtpServer -> smtpServer.getName().equalsIgnoreCase(smtpConfiguration.getDefaultServerName()))
                 .findFirst()
                 .orElse(null);
+    }
+
+    public boolean smtpServerByNameExists(String smtpServerName) {
+        try {
+            getSmtpServerByName(smtpServerName);
+        } catch (Exception e) {
+            return false;
+        }
+
+        return true;
+    }
+
+    private SmtpConfiguration.SmtpServer getSmtpServerByName(String smtpServerName) {
+        if (StringUtils.isEmpty(smtpServerName)) {
+            throw new IllegalArgumentException("Missing smtpServerName.");
+        }
+
+        return smtpConfiguration.getServers().stream()
+                .filter(smtpServer -> smtpServer.getName().equalsIgnoreCase(smtpServerName))
+                .findFirst()
+                .orElseThrow(
+                        () -> new IllegalArgumentException("Smtp server with name " + smtpServerName + " was not found."));
     }
 }

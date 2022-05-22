@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
+import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
@@ -57,11 +58,11 @@ public class EmailManagerService {
      * Returns a list of preview emails based on the same email template and a different implementation
      * of the placeholders for that email template for each recipient.
      *
-     * @param sendEmailResource SendEmailResource
+     * @param previewEmailResource PreviewEmailResource
      * @return list of preview emails
      */
-    public List<RecipientEmailPreview> getPreviewEmails(SendEmailResource sendEmailResource) {
-        return buildPreviewEmails(sendEmailResource);
+    public List<RecipientEmailPreview> getPreviewEmails(PreviewEmailResource previewEmailResource) {
+        return buildPreviewEmails(previewEmailResource);
     }
 
     /**
@@ -105,9 +106,8 @@ public class EmailManagerService {
                                 emailTemplatesConfiguration.getPlaceholderPrefix(),
                                 emailTemplatesConfiguration.getPlaceholderSuffix());
                 final boolean isHtmlMessage = sendEmailResource.getIsHtml();
-                final String sender = smtpService.getUsername();
 
-                sendEmailToRecipient(sender, recipient.getEmail(), emailSubject, emailMessage, isHtmlMessage);
+                sendEmailToRecipient(sendEmailResource.getCredentials(), recipient.getEmail(), emailSubject, emailMessage, isHtmlMessage);
             } catch (Exception e) {
                 errorsCount++;
             }
@@ -116,11 +116,27 @@ public class EmailManagerService {
         return sendEmailResource.getRecipients().size() - errorsCount;
     }
 
-    private void sendEmailToRecipient(String from, String to, String subject, String content, boolean isHtml) {
+    private void sendEmailToRecipient(CredentialsResource credentials, String to, String subject, String content, boolean isHtml) {
         final String confirmationToken = ConfirmationTokenUtil.generateToken();
+        String from = null;
+        Session session = null;
 
         try {
-            Message message = new MimeMessage(smtpService.createSMTPSession());
+            /*
+             * Optional credentials and smtp server.
+             * If they are not provided or the smtp server name is not found in the configuration,
+             * then the default credentials (config vars) and default smtp server will be used.
+             */
+            if (areCredentialsProvided(credentials) && smtpService.smtpServerByNameExists(credentials.getSmtpServerName())) {
+                from = credentials.getUsername();
+                session = smtpService.createSMTPSession(
+                        credentials.getUsername(), credentials.getPassword(), credentials.getSmtpServerName());
+            } else {
+                from = smtpService.getUsername();
+                session = smtpService.createSMTPSession();
+            }
+
+            Message message = new MimeMessage(session);
             message.setFrom(new InternetAddress(from));
             message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to));
             message.setSubject(subject);
@@ -155,16 +171,16 @@ public class EmailManagerService {
         emailHistoryService.persistSentEmail(from, to, subject, content, true, confirmationToken);
     }
 
-    private List<RecipientEmailPreview> buildPreviewEmails(SendEmailResource sendEmailResource) {
+    private List<RecipientEmailPreview> buildPreviewEmails(PreviewEmailResource previewEmailResource) {
         List<RecipientEmailPreview> recipientEmailPreviews = new ArrayList<>();
 
-        for (Recipient recipient : sendEmailResource.getRecipients()) {
+        for (Recipient recipient : previewEmailResource.getRecipients()) {
             RecipientEmailPreview recipientEmailPreview = RecipientEmailPreview.builder()
                     .email(recipient.getEmail())
-                    .subject(sendEmailResource.getTitle())
+                    .subject(previewEmailResource.getTitle())
                     .message(
                             EmailMessageUtil.buildEmailMessage(
-                                    sendEmailResource.getMessage(),
+                                    previewEmailResource.getMessage(),
                                     recipient.getPlaceholders(),
                                     emailTemplatesConfiguration.getPlaceholderPrefix(),
                                     emailTemplatesConfiguration.getPlaceholderSuffix()))
@@ -174,5 +190,12 @@ public class EmailManagerService {
         }
 
         return recipientEmailPreviews;
+    }
+
+    private boolean areCredentialsProvided(CredentialsResource credentialsResource) {
+        return credentialsResource != null &&
+               credentialsResource.getUsername() != null &&
+               credentialsResource.getPassword() != null &&
+               credentialsResource.getSmtpServerName() != null;
     }
 }
