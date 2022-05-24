@@ -28,6 +28,7 @@ public class EmailManagerService {
     private final EmailTemplatesConfiguration emailTemplatesConfiguration;
     private final EmailHistoryService emailHistoryService;
     private final SmtpService smtpService;
+    private final EmailMessageUtil emailMessageUtil;
 
     /**
      * Get the default smtp server that is being used for sending emails.
@@ -118,14 +119,20 @@ public class EmailManagerService {
             try {
                 final String emailSubject = sendEmailResource.getTitle();
                 final String emailMessage =
-                        EmailMessageUtil.buildEmailMessage(
+                        emailMessageUtil.buildEmailMessage(
                                 sendEmailResource.getMessage(),
                                 recipient.getPlaceholders(),
                                 emailTemplatesConfiguration.getPlaceholderPrefix(),
                                 emailTemplatesConfiguration.getPlaceholderSuffix());
                 final boolean isHtmlMessage = sendEmailResource.getIsHtml();
 
-                sendEmailToRecipient(sendEmailResource.getCredentials(), recipient.getEmail(), emailSubject, emailMessage, isHtmlMessage);
+                sendEmailToRecipient(
+                        sendEmailResource.getCredentials(),
+                        recipient.getEmail(),
+                        emailSubject,
+                        emailMessage,
+                        isHtmlMessage,
+                        sendEmailResource.getIncludeConfirmationLink());
             } catch (CredentialsAuthenticationFailedException e) {
                 /*
                  * If we encounter an authentication failed exception, we do not need to attempt sending an email
@@ -141,8 +148,17 @@ public class EmailManagerService {
         return sendEmailResource.getRecipients().size() - errorsCount;
     }
 
-    private void sendEmailToRecipient(CredentialsResource credentials, String to, String subject, String content, boolean isHtml) {
+    private void sendEmailToRecipient(
+            CredentialsResource credentials,
+            String to,
+            String subject,
+            String content,
+            boolean isHtml,
+            boolean includeConfirmationLink) {
         final String confirmationToken = ConfirmationTokenUtil.generateToken();
+        content = includeConfirmationLink
+                    ? emailMessageUtil.appendConfirmationAppLink(content, to, confirmationToken, isHtml)
+                    : content;
         String from = null;
         Session session = null;
 
@@ -207,7 +223,7 @@ public class EmailManagerService {
                     .email(recipient.getEmail())
                     .subject(previewEmailResource.getTitle())
                     .message(
-                            EmailMessageUtil.buildEmailMessage(
+                            emailMessageUtil.buildEmailMessage(
                                     previewEmailResource.getMessage(),
                                     recipient.getPlaceholders(),
                                     emailTemplatesConfiguration.getPlaceholderPrefix(),

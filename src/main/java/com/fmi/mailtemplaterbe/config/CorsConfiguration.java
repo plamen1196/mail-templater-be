@@ -12,4 +12,13 @@ import java.util.List;
 public class CorsConfiguration {
 
     private List<String> allowedOrigins;
+    private String adminFeApp;
+    private String clientFeApp;
+
+    public String getClientFeAppAllowedOrigin() {
+        return allowedOrigins.stream()
+                .filter(allowedOrigin -> allowedOrigin.equalsIgnoreCase(clientFeApp))
+                .findFirst()
+                .orElse(null);
+    }
 }

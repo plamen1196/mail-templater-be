@@ -18,6 +18,9 @@ public class SendEmailResource extends EmailTemplateResource {
     @NotNull(message = "isHtml must not be null")
     private Boolean isHtml;
 
+    @NotNull(message = "includeConfirmationLink must not be null")
+    private Boolean includeConfirmationLink;
+
     @Valid
     private CredentialsResource credentials;
 }

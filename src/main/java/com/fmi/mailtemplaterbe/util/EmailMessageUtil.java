@@ -1,14 +1,18 @@
 package com.fmi.mailtemplaterbe.util;
 
+import com.fmi.mailtemplaterbe.config.CorsConfiguration;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.text.StringSubstitutor;
+import org.springframework.stereotype.Component;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.Map;
 
+@Component
+@RequiredArgsConstructor
 public final class EmailMessageUtil {
 
-    private EmailMessageUtil() {
-
-    }
+    private final CorsConfiguration corsConfiguration;
 
     /**
      * Builds an email message based on an email template and placeholders.
@@ -34,7 +38,7 @@ public final class EmailMessageUtil {
      * @param placeholderSuffix  Placeholder suffix
      * @return Ready to use email message with replaced placeholders
      */
-    public static String buildEmailMessage(
+    public String buildEmailMessage(
             String emailTemplate,
             Map<String, String> placeholders,
             String placeholderPrefix,
@@ -43,5 +47,26 @@ public final class EmailMessageUtil {
         final String result = sub.replace(emailTemplate);
 
         return result;
+    }
+
+    public String appendConfirmationAppLink(
+            String emailMessage, String recipientEmail, String recipientToken, boolean isHtml) {
+        final StringBuilder messageBuilder = new StringBuilder();
+        final String confirmationAppLink = UriComponentsBuilder
+                .fromUriString(corsConfiguration.getClientFeAppAllowedOrigin())
+                .queryParam("recipientEmail", recipientEmail)
+                .queryParam("recipientToken", recipientToken)
+                .build()
+                .toUriString();
+        final String lineSeparator = isHtml ? "<br>" : System.getProperty("line.separator");
+
+        messageBuilder.append(emailMessage);
+        messageBuilder.append(lineSeparator);
+        messageBuilder.append(lineSeparator);
+        messageBuilder.append("Please use the link below to confirm:");
+        messageBuilder.append(lineSeparator);
+        messageBuilder.append(confirmationAppLink);
+
+        return messageBuilder.toString();
     }
 }

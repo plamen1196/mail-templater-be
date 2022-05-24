@@ -6,4 +6,6 @@ spring:
 
 web:
   cors:
-    allowedOrigins: http://dummy-prod-db:0000
+    allowedOrigins: http://dummy-fe-admin:4200, http://dummy-fe-client:5200
+    adminFeApp: http://dummy-fe-admin:4200
+    clientFeApp: http://dummy-fe-client:5200
