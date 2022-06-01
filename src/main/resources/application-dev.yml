@@ -1,7 +1,8 @@
 spring:
   datasource:
     url: "jdbc:mysql://localhost:3306/mailtemplater"
-    username: "root"
+    username: ${db_username:rootfmi}
+    password: ${db_username:22rootfmi23}
     driver-class-name: "com.mysql.jdbc.Driver"
 
 web:
