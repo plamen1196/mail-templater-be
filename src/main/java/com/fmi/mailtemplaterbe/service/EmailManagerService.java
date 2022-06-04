@@ -176,15 +176,15 @@ public class EmailManagerService {
                 session = smtpService.createSMTPSession();
             }
 
-            Message message = new MimeMessage(session);
+            MimeMessage message = new MimeMessage(session);
             message.setFrom(new InternetAddress(from));
             message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to));
-            message.setSubject(subject);
+            message.setSubject(subject, "UTF-8");
 
             if (isHtml) {
                 message.setContent(content, "text/html");
             } else {
-                message.setText(content);
+                message.setText(content, "UTF-8");
             }
 
             Transport.send(message);
