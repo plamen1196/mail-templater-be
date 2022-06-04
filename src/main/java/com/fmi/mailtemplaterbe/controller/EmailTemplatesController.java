@@ -1,6 +1,6 @@
 package com.fmi.mailtemplaterbe.controller;
 
-import com.fmi.mailtemplaterbe.domain.constant.EmailTemplatesConstants;
+import com.fmi.mailtemplaterbe.config.EmailTemplatesConfiguration;
 import com.fmi.mailtemplaterbe.domain.resource.EmailTemplateResource;
 import com.fmi.mailtemplaterbe.service.EmailTemplateService;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +16,7 @@ import java.util.List;
 public class EmailTemplatesController {
 
     private final EmailTemplateService emailTemplateService;
+    private final EmailTemplatesConfiguration emailTemplatesConfiguration;
 
     @PostMapping(
             value = "/templates",
@@ -55,6 +56,6 @@ public class EmailTemplatesController {
             value = "/templates/message-max-length",
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Integer> getTemplatesMessageMaxLength() {
-        return ResponseEntity.ok(EmailTemplatesConstants.TEMPLATES_MESSAGE_MAX_LENGTH);
+        return ResponseEntity.ok(emailTemplatesConfiguration.getMessageMaxLength());
     }
 }

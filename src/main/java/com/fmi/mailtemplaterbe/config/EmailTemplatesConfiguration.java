@@ -13,11 +13,18 @@ public class EmailTemplatesConfiguration {
     @Value("${email-templates.placeholder-suffix}")
     private String placeholderSuffix;
 
+    @Value("${email-templates.message-max-length}")
+    private int messageMaxLength;
+
     public String getPlaceholderPrefix() {
         return placeholderPrefix;
     }
 
     public String getPlaceholderSuffix() {
         return placeholderSuffix;
+    }
+
+    public int getMessageMaxLength() {
+        return messageMaxLength;
     }
 }

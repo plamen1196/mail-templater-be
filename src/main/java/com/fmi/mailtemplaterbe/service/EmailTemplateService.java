@@ -8,6 +8,7 @@ import com.fmi.mailtemplaterbe.mapper.EmailTemplateMapper;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.exception.ConstraintViolationException;
+import org.hibernate.exception.DataException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
@@ -88,7 +89,13 @@ public class EmailTemplateService {
 
                 throw ExceptionsUtil.getEmailTemplateConstraintViolationException(
                         constraintViolationCause.getMessage());
+            } else if (dataIntegrityViolationCause instanceof DataException) {
+                final Throwable constraintViolationCause = dataIntegrityViolationCause.getCause();
+
+                throw ExceptionsUtil.getCustomBadRequestException(constraintViolationCause.getMessage());
             }
+
+            throw e;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

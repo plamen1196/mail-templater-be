@@ -43,3 +43,5 @@ email:
 email-templates:
   placeholder-prefix: "%("
   placeholder-suffix: ")"
+  message-max-length: 2048 # Database based constraint
+
