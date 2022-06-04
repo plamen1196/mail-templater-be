@@ -10,3 +10,8 @@ web:
     allowedOrigins: http://localhost:4200, http://localhost:5200
     adminFeApp: http://localhost:4200
     clientFeApp: http://localhost:5200
+
+local:
+  sender:
+    username: test # Change for local usage only - don't commit.
+    password: test # Change for local usage only - don't commit.

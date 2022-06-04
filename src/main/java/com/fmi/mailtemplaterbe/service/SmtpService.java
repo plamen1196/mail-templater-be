@@ -17,10 +17,10 @@ public class SmtpService {
 
     private final SmtpConfiguration smtpConfiguration;
 
-    @Value("${username}")
+    @Value("${local.sender.username}")
     private String username;
 
-    @Value("${password}")
+    @Value("${local.sender.password}")
     private String password;
 
     public Session createSMTPSession() {
