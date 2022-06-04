@@ -6,6 +6,7 @@ import org.apache.commons.text.StringSubstitutor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.util.Arrays;
 import java.util.Map;
 
 @Component
@@ -50,10 +51,11 @@ public final class EmailMessageUtil {
     }
 
     public String appendConfirmationAppLink(
-            String emailMessage, String recipientEmail, String recipientToken, boolean isHtml) {
+            String subject, String emailMessage, String recipientEmail, String recipientToken, boolean isHtml) {
         final StringBuilder messageBuilder = new StringBuilder();
         final String confirmationAppLink = UriComponentsBuilder
                 .fromUriString(corsConfiguration.getClientFeAppAllowedOrigin())
+                .queryParam("subject", containsSpaces(subject) ? concatWords(subject, "+") : subject)
                 .queryParam("recipientEmail", recipientEmail)
                 .queryParam("recipientToken", recipientToken)
                 .build()
@@ -68,5 +70,13 @@ public final class EmailMessageUtil {
         messageBuilder.append(confirmationAppLink);
 
         return messageBuilder.toString();
+    }
+
+    private boolean containsSpaces(String value) {
+        return value != null && value.contains(" ");
+    }
+
+    private String concatWords(String value, String concatSymbol) {
+        return String.join(concatSymbol, Arrays.asList(value.split(" ")));
     }
 }

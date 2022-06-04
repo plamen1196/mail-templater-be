@@ -157,7 +157,7 @@ public class EmailManagerService {
             boolean includeConfirmationLink) {
         final String confirmationToken = ConfirmationTokenUtil.generateToken();
         content = includeConfirmationLink
-                    ? emailMessageUtil.appendConfirmationAppLink(content, to, confirmationToken, isHtml)
+                    ? emailMessageUtil.appendConfirmationAppLink(subject, content, to, confirmationToken, isHtml)
                     : content;
         String from = null;
         Session session = null;
