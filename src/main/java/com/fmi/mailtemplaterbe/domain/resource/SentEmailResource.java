@@ -16,4 +16,5 @@ public class SentEmailResource {
     private boolean sentSuccessfully;
     private LocalDateTime timestamp;
     private Long confirmation;
+    private String errorMessage; /* Optional */
 }

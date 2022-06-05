@@ -26,6 +26,7 @@ public final class SentEmailMapper {
                 .timestamp(sentEmailEntity.getTimestamp())
                 .confirmation(sentEmailEntity.getConfirmation())
                 /* Mapping of confirmation token is unnecessary. */
+                /* Mapping of errorMessage is done separately. */
                 .build();
     }
 

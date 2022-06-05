@@ -127,6 +127,9 @@ public class EmailHistoryService {
         sentEmails = filterSentEmailsBySentSuccessfully(sentEmails, sentSuccessfully);
         sentEmails = filterSentEmailsByConfirmation(sentEmails, confirmation);
 
+        /* Third, apply the errorMessage for the sent emails. */
+        sentEmails = applyErrorMessageIfErrorExists(sentEmails);
+
         return sentEmails;
     }
 
@@ -251,6 +254,27 @@ public class EmailHistoryService {
         return sentEmails.stream()
                 .filter(sentEmail -> confirmation.equals(sentEmail.getConfirmation()))
                 .collect(Collectors.toList());
+    }
+
+    private List<SentEmailResource> applyErrorMessageIfErrorExists(List<SentEmailResource> sentEmails) {
+        for (SentEmailResource sentEmail : sentEmails) {
+            SentEmailEntity sentEmailEntity = sentEmailEntityRepository.findById(sentEmail.getId()).orElse(null);
+
+            if (sentEmailEntity != null) {
+                Long sendEmailErrorId = sentEmailEntity.getSendEmailErrorId();
+
+                if (sendEmailErrorId != null) {
+                    SendEmailErrorEntity sendEmailErrorEntity = sendEmailErrorRepository.findById(sendEmailErrorId).orElse(null);
+
+                    if (sendEmailErrorEntity != null) {
+                        /* Set error message if such exists */
+                        sentEmail.setErrorMessage(sendEmailErrorEntity.getError());
+                    }
+                }
+            }
+        }
+
+        return sentEmails;
     }
 
     private List<SentEmailEntity> getSentEmailEntitiesBetweenDates(LocalDateTime startDate, LocalDateTime endDate) {
