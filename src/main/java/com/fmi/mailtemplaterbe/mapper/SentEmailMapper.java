@@ -16,14 +16,16 @@ public final class SentEmailMapper {
 
         return SentEmailResource.builder()
                 .id(sentEmailEntity.getId())
+                /* Mapping of emailTemplateId is unnecessary. */
                 .subject(sentEmailEntity.getSubject())
                 .message(sentEmailEntity.getMessage())
                 .senderEmail(sentEmailEntity.getSenderEmail())
                 .recipientEmail(sentEmailEntity.getRecipientEmail())
                 .sentSuccessfully(sentEmailEntity.isSentSuccessfully())
+                /* Mapping of sendEmailErrorId is unnecessary. */
                 .timestamp(sentEmailEntity.getTimestamp())
                 .confirmation(sentEmailEntity.getConfirmation())
-                /* Mapping confirmation token is unnecessary. */
+                /* Mapping of confirmation token is unnecessary. */
                 .build();
     }
 
@@ -41,7 +43,7 @@ public final class SentEmailMapper {
                 .sentSuccessfully(sentEmailResource.isSentSuccessfully())
                 .timestamp(sentEmailResource.getTimestamp())
                 .confirmation(sentEmailResource.getConfirmation())
-                /* Mapping confirmation token is unnecessary. */
+                /* Mapping of confirmation token is unnecessary. */
                 .build();
     }
 }

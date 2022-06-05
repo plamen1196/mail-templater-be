@@ -29,22 +29,33 @@ public class EmailHistoryService {
      * Persist the information of a sent email within the database for history purposes..
      * The method is used for both successfully and not successfully sent emails.
      *
-     * @param sender           Email of the sender.
-     * @param recipient        Email of the recipient.
+     * @param emailTemplateId  Id of the email template that was used for the email.
+     * @param sender           Email address of the sender.
+     * @param recipient        Email address of the recipient.
      * @param subject          Subject of the email.
      * @param message          Message of the email.
      * @param sentSuccessfully True if the email was sent successfully and false otherwise.
      * @param token            Confirmation token for the sent email.
+     * @param sendEmailErrorId Id of the email error that occurred. If no error was thrown, pass null.
      * @return Saved record for the sent email.
      */
     public SentEmailEntity persistSentEmail(
-            String sender, String recipient, String subject, String message, boolean sentSuccessfully, String token) {
+            Long emailTemplateId,
+            String sender,
+            String recipient,
+            String subject,
+            String message,
+            boolean sentSuccessfully,
+            String token,
+            Long sendEmailErrorId) {
         SentEmailEntity sentEmailEntity = SentEmailEntity.builder()
+                .emailTemplateId(emailTemplateId)
                 .senderEmail(sender)
                 .recipientEmail(recipient)
                 .subject(subject)
                 .message(message)
                 .sentSuccessfully(sentSuccessfully)
+                .sendEmailErrorId(sendEmailErrorId != null ? sendEmailErrorId : null)
                 .timestamp(LocalDateTime.now())
                 /* Initial confirmation is always unconfirmed. */
                 .confirmation(SentEmailConfirmation.UNCONFIRMED.getValue())
@@ -58,8 +69,8 @@ public class EmailHistoryService {
      * Persist the information of an email that failed to send.
      * The method is used only for not successfully sent emails.
      *
-     * @param sender    Email of the sender.
-     * @param recipient Email of the recipient.
+     * @param sender    Email address of the sender.
+     * @param recipient Email address of the recipient.
      * @param subject   Subject of the email.
      * @param message   Message of the email.
      * @param error     Error message.

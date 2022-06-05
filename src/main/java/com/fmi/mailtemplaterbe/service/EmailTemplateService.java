@@ -76,6 +76,18 @@ public class EmailTemplateService {
         emailTemplateRepository.delete(emailTemplateEntity);
     }
 
+    /**
+     * Returns true if an email template with the provided id exists.
+     *
+     * @param id The id of the email template.
+     * @return True if the email template exists and false otherwise.
+     */
+    public boolean emailTemplateExistsById(Long id) {
+        EmailTemplateEntity emailTemplateEntity = emailTemplateRepository.findById(id).orElse(null);
+
+        return emailTemplateEntity != null;
+    }
+
     private EmailTemplateEntity saveEmailTemplateEntity(EmailTemplateEntity emailTemplateEntity) {
         EmailTemplateEntity savedEmailTemplateEntity = null;
 

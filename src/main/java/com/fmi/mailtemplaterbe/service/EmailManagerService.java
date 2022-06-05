@@ -2,6 +2,7 @@ package com.fmi.mailtemplaterbe.service;
 
 import com.fmi.mailtemplaterbe.config.EmailTemplatesConfiguration;
 import com.fmi.mailtemplaterbe.config.SmtpConfiguration;
+import com.fmi.mailtemplaterbe.domain.entity.SendEmailErrorEntity;
 import com.fmi.mailtemplaterbe.domain.enums.EmailErrorCategory;
 import com.fmi.mailtemplaterbe.domain.resource.*;
 import com.fmi.mailtemplaterbe.exception.CredentialsAuthenticationFailedException;
@@ -26,6 +27,7 @@ import java.util.stream.Collectors;
 public class EmailManagerService {
 
     private final EmailTemplatesConfiguration emailTemplatesConfiguration;
+    private final EmailTemplateService emailTemplateService;
     private final EmailHistoryService emailHistoryService;
     private final SmtpService smtpService;
     private final EmailMessageUtil emailMessageUtil;
@@ -110,6 +112,7 @@ public class EmailManagerService {
     }
 
     private int sendEmailToRecipients(SendEmailResource sendEmailResource) {
+        validateEmailTemplateId(sendEmailResource.getId());
         /* If credentials are provided, we need to validate them first. */
         validateSmtpServerIfNecessary(sendEmailResource.getCredentials());
 
@@ -127,6 +130,7 @@ public class EmailManagerService {
                 final boolean isHtmlMessage = sendEmailResource.getIsHtml();
 
                 sendEmailToRecipient(
+                        sendEmailResource.getId(),
                         sendEmailResource.getCredentials(),
                         recipient.getEmail(),
                         emailSubject,
@@ -149,6 +153,7 @@ public class EmailManagerService {
     }
 
     private void sendEmailToRecipient(
+            Long emailTemplateId,
             CredentialsResource credentials,
             String to,
             String subject,
@@ -182,7 +187,7 @@ public class EmailManagerService {
             message.setSubject(subject, "UTF-8");
 
             if (isHtml) {
-                message.setContent(content, "text/html");
+                message.setContent(content, "text/html;charset=UTF-8");
             } else {
                 message.setText(content, "UTF-8");
             }
@@ -190,8 +195,12 @@ public class EmailManagerService {
             Transport.send(message);
         } catch (MessagingException e) {
             e.printStackTrace();
-            emailHistoryService.persistSentEmail(from, to, subject, content, false, confirmationToken);
-            emailHistoryService.persistSendEmailError(from, to, subject, content, e.getMessage(), EmailErrorCategory.MESSAGING);
+            final SendEmailErrorEntity sendEmailErrorEntity =
+                    emailHistoryService.persistSendEmailError(from, to, subject, content, e.getMessage(), EmailErrorCategory.MESSAGING);
+            final Long emailErrorId = sendEmailErrorEntity.getId();
+
+            emailHistoryService.persistSentEmail(
+                    emailTemplateId, from, to, subject, content, false, confirmationToken, emailErrorId);
 
             if (e instanceof AuthenticationFailedException) {
                 throw ExceptionsUtil.getCredentialsAuthenticationFailedException(e.getMessage());
@@ -200,19 +209,28 @@ public class EmailManagerService {
             throw new RuntimeException(e);
         } catch (RuntimeException e) {
             e.printStackTrace();
-            emailHistoryService.persistSentEmail(from, to, subject, content, false, confirmationToken);
-            emailHistoryService.persistSendEmailError(from, to, subject, content, e.getMessage(), EmailErrorCategory.RUNTIME);
+            final SendEmailErrorEntity sendEmailErrorEntity =
+                    emailHistoryService.persistSendEmailError(from, to, subject, content, e.getMessage(), EmailErrorCategory.RUNTIME);
+            final Long emailErrorId = sendEmailErrorEntity.getId();
+
+            emailHistoryService.persistSentEmail(
+                    emailTemplateId, from, to, subject, content, false, confirmationToken, emailErrorId);
 
             throw e;
         } catch (Exception e) {
             e.printStackTrace();
-            emailHistoryService.persistSentEmail(from, to, subject, content, false, confirmationToken);
-            emailHistoryService.persistSendEmailError(from, to, subject, content, e.getMessage(), EmailErrorCategory.UNKNOWN);
+            final SendEmailErrorEntity sendEmailErrorEntity =
+                    emailHistoryService.persistSendEmailError(from, to, subject, content, e.getMessage(), EmailErrorCategory.UNKNOWN);
+            final Long emailErrorId = sendEmailErrorEntity.getId();
+
+            emailHistoryService.persistSentEmail(
+                    emailTemplateId, from, to, subject, content, false, confirmationToken, emailErrorId);
 
             throw new RuntimeException(e);
         }
 
-        emailHistoryService.persistSentEmail(from, to, subject, content, true, confirmationToken);
+        emailHistoryService.persistSentEmail(
+                emailTemplateId, from, to, subject, content, true, confirmationToken, null);
     }
 
     private List<RecipientEmailPreview> buildPreviewEmails(PreviewEmailResource previewEmailResource) {
@@ -241,6 +259,18 @@ public class EmailManagerService {
                credentialsResource.getUsername() != null &&
                credentialsResource.getPassword() != null &&
                credentialsResource.getSmtpServerName() != null;
+    }
+
+    private void validateEmailTemplateId(Long id) {
+        if (id == null) {
+            throw ExceptionsUtil.getCustomBadRequestException(
+                    "Missing value for field: id. Please provide id of the email template.");
+        }
+
+        if (!emailTemplateService.emailTemplateExistsById(id)) {
+            throw ExceptionsUtil.getCustomBadRequestException(
+                    "Email template with id: " + id + " does not exist. Please provide id of an existing template.");
+        }
     }
 
     private void validateSmtpServerIfNecessary(CredentialsResource credentialsResource) {

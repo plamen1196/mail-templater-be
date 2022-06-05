@@ -21,6 +21,9 @@ public class SentEmailEntity {
     @Column(name = "id", nullable = false)
     private Long id;
 
+    @Column(name = "email_template_id", nullable = false)
+    private Long emailTemplateId;
+
     @Column(name = "subject", nullable = false)
     private String subject;
 
@@ -35,6 +38,9 @@ public class SentEmailEntity {
 
     @Column(name = "sent_successfully", nullable = false)
     private boolean sentSuccessfully;
+
+    @Column(name = "send_email_error_id")
+    private Long sendEmailErrorId;
 
     @Column(name = "timestamp", nullable = false)
     private LocalDateTime timestamp;
