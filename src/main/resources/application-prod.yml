@@ -4,9 +4,20 @@ spring:
     username: ${db_username:rootfmi}
     password: ${db_password:22rootfmi23}
     driver-class-name: "com.mysql.jdbc.Driver"
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+server:
+  port: 5000
 
 web:
   cors:
     allowedOrigins: http://dummy-fe-admin:4200, http://dummy-fe-client:5200
     adminFeApp: http://dummy-fe-admin:4200
     clientFeApp: http://dummy-fe-client:5200
+
+local:
+  sender:
+    username: test # Change for local usage only - don't commit.
+    password: test # Change for local usage only - don't commit.
