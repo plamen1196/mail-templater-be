@@ -45,3 +45,5 @@ email-templates:
   placeholder-suffix: ")"
   message-max-length: 2048 # Database based constraint
 
+confirmation-reply-email:
+  reply-message-max-length: 2048

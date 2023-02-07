@@ -1,10 +1,9 @@
 spring:
   datasource:
-    url: "jdbc:mysql://localhost:3306/mailtemplater"
-    username: ${db_username:rootfmi}
-    password: ${db_password:22rootfmi23}
-    driver-class-name: "com.mysql.jdbc.Driver"
-
+    url: "jdbc:mysql://localhost:3306/mailtemplater?createDatabaseIfNotExist=true"
+    username: ${db_username:EmailTemplaterUser}
+    password: ${db_password:}
+    driver-class-name: "com.mysql.cj.jdbc.Driver"
 web:
   cors:
     allowedOrigins: http://localhost:4200, http://localhost:5200
